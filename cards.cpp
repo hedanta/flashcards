@@ -1,4 +1,4 @@
-
+п»ї
 #include <nlohmann/json.hpp>
 
 #include <iostream>
@@ -8,7 +8,7 @@
 using json = nlohmann::ordered_json;
 using CardsContainer = std::unordered_map<std::string, std::string>;
 
-// управление колодами
+// СѓРїСЂР°РІР»РµРЅРёРµ РєРѕР»РѕРґР°РјРё
 class DeckManager : CardManager{
 private:
   std::string deck_name_ = "All";
@@ -30,7 +30,7 @@ public:
   CardsContainer& GetCards(std::string& deck_name);
 };
 
-// получение карточек из колоды
+// РїРѕР»СѓС‡РµРЅРёРµ РєР°СЂС‚РѕС‡РµРє РёР· РєРѕР»РѕРґС‹
 CardsContainer& DeckManager::GetCards(std::string& deck_name) {
   std::ifstream file;
   file.exceptions(std::ifstream::badbit);
@@ -54,7 +54,7 @@ CardsContainer& DeckManager::GetCards(std::string& deck_name) {
   file.close();
 }
 
-// изучение колоды карточек
+// РёР·СѓС‡РµРЅРёРµ РєРѕР»РѕРґС‹ РєР°СЂС‚РѕС‡РµРє
 class CardLearner {
 private:
   DeckManager current_deck_;
@@ -63,12 +63,12 @@ public:
   void LoadCards(std::string& deck_name);
 };
 
-// загрузка колоды
+// Р·Р°РіСЂСѓР·РєР° РєРѕР»РѕРґС‹
 void CardLearner::LoadCards(std::string& deck_name) {
   current_deck_ = DeckManager(deck_name);
 }
 
-// управление карточками
+// СѓРїСЂР°РІР»РµРЅРёРµ РєР°СЂС‚РѕС‡РєР°РјРё
 class CardManager {
 private:
   std::string path_to_file_ = "cards.json";
@@ -93,7 +93,7 @@ public:
   void RemoveFromDeck(int card_id, std::string deck_name);
 };
 
-// чтение из json
+// С‡С‚РµРЅРёРµ РёР· json
 json CardManager::ReadFromCardsFile(std::string& path) {
   std::ifstream cards_file(path);
   json data = json::parse(cards_file);
@@ -101,14 +101,14 @@ json CardManager::ReadFromCardsFile(std::string& path) {
   return data;
 }
 
-// запись в json
+// Р·Р°РїРёСЃСЊ РІ json
 void CardManager::WriteToCardsFile(std::string& path, json& data) {
   std::ofstream cards_edit(path);
   cards_edit << std::setw(2) << data << std::endl;
   cards_edit.close();
 }
 
-// добавление карточки в колоду
+// РґРѕР±Р°РІР»РµРЅРёРµ РєР°СЂС‚РѕС‡РєРё РІ РєРѕР»РѕРґСѓ
 void CardManager::AddToDeck(int card_id, std::string deck_name) {
   json data = CardManager::ReadFromCardsFile(path_to_file_);
 
@@ -117,14 +117,14 @@ void CardManager::AddToDeck(int card_id, std::string deck_name) {
   CardManager::WriteToCardsFile(path_to_file_, data);
 }
 
-// удаление карточки из колоды
+// СѓРґР°Р»РµРЅРёРµ РєР°СЂС‚РѕС‡РєРё РёР· РєРѕР»РѕРґС‹
 void CardManager::RemoveFromDeck(int card_id, std::string deck_name) {
   json data = CardManager::ReadFromCardsFile(path_to_file_);
 
-  // количество колод, в которых есть карточка
+  // РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕР»РѕРґ, РІ РєРѕС‚РѕСЂС‹С… РµСЃС‚СЊ РєР°СЂС‚РѕС‡РєР°
   int deck_count = data["cards"][card_id]["deck"].size();
 
-  // ищем индекс колоды, чтобы стереть её
+  // РёС‰РµРј РёРЅРґРµРєСЃ РєРѕР»РѕРґС‹, С‡С‚РѕР±С‹ СЃС‚РµСЂРµС‚СЊ РµС‘
   bool deleted = 0;
   for (int deck_idx = 0; deck_idx < deck_count; deck_idx += 1) {
     if (data["cards"][card_id]["deck"][deck_idx] == deck_name) {
