@@ -7,7 +7,7 @@ set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 find_package(nlohmann_json CONFIG REQUIRED)
 
 set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
-set(SOURCES cards.cpp)
+set(SOURCES "cards.cpp")
 
 add_executable(cards ${SOURCES})
 target_link_libraries(cards PRIVATE nlohmann_json::nlohmann_json)

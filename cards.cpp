@@ -3,11 +3,74 @@
 
 #include <iostream>
 #include <fstream>
+#include <unordered_map>
 
 using json = nlohmann::ordered_json;
+using CardsContainer = std::unordered_map<std::string, std::string>;
 
-class CardManager {
+// управление колодами
+class DeckManager : CardManager{
+private:
+  std::string deck_name_ = "All";
+  CardsContainer deck_cards_;
+  CardManager cards;
+
 public:
+  DeckManager() = default;
+  DeckManager(const DeckManager&) {};
+  DeckManager(std::string& deck_name)
+    : deck_name_{ deck_name },
+    deck_cards_{}
+  {};
+
+  DeckManager& operator=(const DeckManager&) = default;
+
+  ~DeckManager() = default;
+
+  CardsContainer& GetCards(std::string& deck_name);
+};
+
+// получение карточек из колоды
+CardsContainer& DeckManager::GetCards(std::string& deck_name) {
+  std::ifstream file;
+  file.exceptions(std::ifstream::badbit);
+
+  try {
+    file.open(cards.path_to_file_);
+    json json_obj = json::parse(file);
+    for (auto& el : json_obj["cards"].items()) {
+      for (auto& deck_el : el.value()["deck"].items()) {
+        if (deck_el.value() == deck_name) {
+          deck_cards_.insert({ el.value()["question"], el.value()["answer"] });
+        }
+      }
+    }
+  }
+  
+  catch (std::ifstream::failure& e) {
+    std::cerr << "Exception opening/reading/closing file\n";
+  }
+
+  file.close();
+}
+
+// изучение колоды карточек
+class CardLearner {
+private:
+  DeckManager current_deck_;
+
+public:
+  void LoadCards(std::string& deck_name);
+};
+
+// загрузка колоды
+void CardLearner::LoadCards(std::string& deck_name) {
+  current_deck_ = DeckManager(deck_name);
+}
+
+// управление карточками
+class CardManager {
+private:
   std::string path_to_file_ = "cards.json";
 
 public:
