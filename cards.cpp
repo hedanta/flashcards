@@ -8,6 +8,35 @@
 using json = nlohmann::ordered_json;
 using CardsContainer = std::unordered_map<std::string, std::string>;
 
+namespace {
+  CardsContainer GetCards(const std::string& deck_name) {
+    std::ifstream file;
+    file.exceptions(std::ifstream::badbit);
+
+    CardsContainer current_deck{};
+
+    try {
+      file.open("cards.json");
+      json json_obj = json::parse(file);
+      for (auto& el : json_obj["cards"].items()) {
+        for (auto& deck_el : el.value()["deck"].items()) {
+          if (deck_el.value() == deck_name) {
+            current_deck.insert({ el.value()["question"], el.value()["answer"] });
+          }
+        }
+      }
+    }
+
+    catch (std::ifstream::failure& e) {
+      std::cerr << "Exception opening/reading/closing file\n";
+    }
+
+    file.close();
+    return current_deck;
+  }
+
+
+
 // управление колодами
 class DeckManager : CardManager{
 private:
@@ -19,40 +48,14 @@ public:
   DeckManager() = default;
   DeckManager(const DeckManager&) {};
   DeckManager(std::string& deck_name)
-    : deck_name_{ deck_name },
-    deck_cards_{}
+    : deck_name_{ deck_name }
+    , deck_cards_{ GetCards(deck_name) }
   {};
 
   DeckManager& operator=(const DeckManager&) = default;
 
   ~DeckManager() = default;
-
-  CardsContainer& GetCards(std::string& deck_name);
 };
-
-// получение карточек из колоды
-CardsContainer& DeckManager::GetCards(std::string& deck_name) {
-  std::ifstream file;
-  file.exceptions(std::ifstream::badbit);
-
-  try {
-    file.open(cards.path_to_file_);
-    json json_obj = json::parse(file);
-    for (auto& el : json_obj["cards"].items()) {
-      for (auto& deck_el : el.value()["deck"].items()) {
-        if (deck_el.value() == deck_name) {
-          deck_cards_.insert({ el.value()["question"], el.value()["answer"] });
-        }
-      }
-    }
-  }
-  
-  catch (std::ifstream::failure& e) {
-    std::cerr << "Exception opening/reading/closing file\n";
-  }
-
-  file.close();
-}
 
 // изучение колоды карточек
 class CardLearner {
