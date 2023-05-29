@@ -1,44 +1,47 @@
 {
+  "decks": {
+    "All": 0
+  },
   "cards": [
     {
       "id": 0,
-      "deck": [ "All" ],
+      "deck": [ 0 ],
       "question": "2+2",
       "answer": "4"
     },
     {
       "id": 1,
-      "deck": [ "All" ],
+      "deck": [ 0 ],
       "question": "2+3",
       "answer": "5"
     },
     {
       "id": 2,
-      "deck": [ "All" ],
+      "deck": [ 0 ],
       "question": "2+4",
       "answer": "6"
     },
     {
       "id": 3,
-      "deck": [ "All" ],
+      "deck": [ 0 ],
       "question": "2+5",
       "answer": "7"
     },
     {
       "id": 4,
-      "deck": [ "All" ],
+      "deck": [ 0 ],
       "question": "2+6",
       "answer": "8"
     },
     {
       "id": 5,
-      "deck": [ "All" ],
+      "deck": [ 0 ],
       "question": "2+7",
       "answer": "9"
     },
     {
       "id": 6,
-      "deck": [ "All" ],
+      "deck": [ 0 ],
       "question": "2+8",
       "answer": "10"
     }
