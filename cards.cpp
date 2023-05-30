@@ -120,12 +120,7 @@ Flashcard CardLearner::GetCard() {
 }
 
 bool CardLearner::CheckUserAnswer(std::string& user_ans, std::string& card_ans) {
-  if (user_ans == card_ans) {
-    return true;
-  }
-  else {
-    return false;
-  }
+  return user_ans == card_ans;
 }
 
 // чтение из json
@@ -167,7 +162,7 @@ void CardManager::WriteToCardsFile(json& data) {
 
 // создание колоды
 void CardManager::CreateDeck(std::string& deck_name) {
-  json data = CardManager::ReadFromCardsFile();
+  json data = ReadFromCardsFile();
 
   // setting deck id
   bool found = false;
@@ -184,12 +179,12 @@ void CardManager::CreateDeck(std::string& deck_name) {
     data["decks"].insert(edits.begin(), edits.end());
   }
 
-  CardManager::WriteToCardsFile(data);
+  WriteToCardsFile(data);
 }
 
 // it is what it is
 int CardManager::GetDeckId(std::string& deck_name) {
-  json data = CardManager::ReadFromCardsFile();
+  json data = ReadFromCardsFile();
 
   for (auto& it : data["decks"].items()) {
     if (it.key() == deck_name) {
@@ -200,7 +195,7 @@ int CardManager::GetDeckId(std::string& deck_name) {
 
 // добавление карточки в колоду
 void CardManager::AddToDeck(int card_id, int deck_id) {
-  json data = CardManager::ReadFromCardsFile();
+  json data = ReadFromCardsFile();
 
   bool found = false;
   for (auto& it : data["cards"][card_id]["deck"].items()) {
@@ -214,12 +209,12 @@ void CardManager::AddToDeck(int card_id, int deck_id) {
     data["cards"][card_id]["deck"].push_back(deck_id);
   }
 
-  CardManager::WriteToCardsFile(data);
+  WriteToCardsFile(data);
 }
 
 // удаление карточки из колоды
 void CardManager::RemoveFromDeck(int card_id, int deck_id) {
-  json data = CardManager::ReadFromCardsFile();
+  json data = ReadFromCardsFile();
 
   // количество колод, в которых есть карточка
   int deck_count = data["cards"][card_id]["deck"].size();
@@ -232,11 +227,11 @@ void CardManager::RemoveFromDeck(int card_id, int deck_id) {
     }
   }
 
-  CardManager::WriteToCardsFile(data);
+  WriteToCardsFile(data);
 }
 
 void CardManager::RenameDeck(std::string previous_name, std::string new_name) {
-  json data = CardManager::ReadFromCardsFile();
+  json data = ReadFromCardsFile();
 
   const auto deck_it = data.find(previous_name);
   if (deck_it != data.end()) {
@@ -244,7 +239,7 @@ void CardManager::RenameDeck(std::string previous_name, std::string new_name) {
     data.erase(deck_it);
   }
   
-  CardManager::WriteToCardsFile(data);
+  WriteToCardsFile(data);
 }
 
 int main() {
