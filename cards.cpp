@@ -252,7 +252,7 @@ const void CardManager::RenameDeck(std::string previous_name, std::string new_na
 int main() {
   CardManager test;
   
-  std::string deck = "Maths";
+  std::string deck = "maths";
   int deck_id = test.GetDeckId(deck);
   test.AddToDeck(0, deck_id);
   test.AddToDeck(5, deck_id);

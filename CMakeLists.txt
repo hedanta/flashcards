@@ -20,4 +20,3 @@ target_link_libraries(cards PRIVATE nlohmann_json::nlohmann_json wx::core wx::ba
 file(GLOB RESOURCES "cards.json")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cards.json
    ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-#file(COPY ${RESOURCES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
