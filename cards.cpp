@@ -69,15 +69,15 @@ public:
 
   ~CardManager() = default;
 
-  json ReadFromCardsFile();
-  void WriteToCardsFile(json& data);
+  const json ReadFromCardsFile();
+  const void WriteToCardsFile(json& data);
 
-  void CreateDeck(std::string& deck_name);
-  int GetDeckId(std::string& deck_name);
+  const void CreateDeck(std::string& deck_name);
+  const int GetDeckId(std::string& deck_name);
 
-  void AddToDeck(int card_id, int deck_id);
-  void RemoveFromDeck(int card_id, int deck_id);
-  void RenameDeck(std::string previous_name, std::string new_name);
+  const void AddToDeck(int card_id, int deck_id);
+  const void RemoveFromDeck(int card_id, int deck_id);
+  const void RenameDeck(std::string previous_name, std::string new_name);
 };
 
 // изучение колоды карточек
@@ -103,7 +103,14 @@ public:
 
   Flashcard GetCard();
 
-  bool CheckUserAnswer(std::string& user_ans, std::string& card_ans);
+  const bool CheckUserAnswer(std::string& user_ans, std::string& card_ans);
+};
+
+class Render {
+public:
+  const void DrawCard(Flashcard& card);
+  const void DrawAnswerBox();
+  const void DrawAnswer(Flashcard& card);
 };
 
 Flashcard CardLearner::GetCard() {
@@ -119,12 +126,12 @@ Flashcard CardLearner::GetCard() {
   return card;
 }
 
-bool CardLearner::CheckUserAnswer(std::string& user_ans, std::string& card_ans) {
+const bool CardLearner::CheckUserAnswer(std::string& user_ans, std::string& card_ans) {
   return user_ans == card_ans;
 }
 
 // чтение из json
-json CardManager::ReadFromCardsFile() {
+const json CardManager::ReadFromCardsFile() {
   std::ifstream cards_file;
   cards_file.exceptions(std::ifstream::badbit);
 
@@ -144,7 +151,7 @@ json CardManager::ReadFromCardsFile() {
 }
 
 // запись в json
-void CardManager::WriteToCardsFile(json& data) {
+const void CardManager::WriteToCardsFile(json& data) {
   std::ofstream cards_edit;
   cards_edit.exceptions(std::ofstream::badbit);
 
@@ -161,7 +168,7 @@ void CardManager::WriteToCardsFile(json& data) {
 }
 
 // создание колоды
-void CardManager::CreateDeck(std::string& deck_name) {
+const void CardManager::CreateDeck(std::string& deck_name) {
   json data = ReadFromCardsFile();
 
   // setting deck id
@@ -183,7 +190,7 @@ void CardManager::CreateDeck(std::string& deck_name) {
 }
 
 // it is what it is
-int CardManager::GetDeckId(std::string& deck_name) {
+const int CardManager::GetDeckId(std::string& deck_name) {
   json data = ReadFromCardsFile();
 
   for (auto& it : data["decks"].items()) {
@@ -194,7 +201,7 @@ int CardManager::GetDeckId(std::string& deck_name) {
 }
 
 // добавление карточки в колоду
-void CardManager::AddToDeck(int card_id, int deck_id) {
+const void CardManager::AddToDeck(int card_id, int deck_id) {
   json data = ReadFromCardsFile();
 
   bool found = false;
@@ -213,7 +220,7 @@ void CardManager::AddToDeck(int card_id, int deck_id) {
 }
 
 // удаление карточки из колоды
-void CardManager::RemoveFromDeck(int card_id, int deck_id) {
+const void CardManager::RemoveFromDeck(int card_id, int deck_id) {
   json data = ReadFromCardsFile();
 
   // количество колод, в которых есть карточка
@@ -230,7 +237,7 @@ void CardManager::RemoveFromDeck(int card_id, int deck_id) {
   WriteToCardsFile(data);
 }
 
-void CardManager::RenameDeck(std::string previous_name, std::string new_name) {
+const void CardManager::RenameDeck(std::string previous_name, std::string new_name) {
   json data = ReadFromCardsFile();
 
   const auto deck_it = data.find(previous_name);
