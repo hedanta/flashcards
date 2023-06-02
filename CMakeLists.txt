@@ -9,13 +9,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True) 
 
 find_package(nlohmann_json CONFIG REQUIRED)
-find_package(wxWidgets CONFIG REQUIRED)
-
 set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
-set(SOURCES "main.cpp")
 
-add_executable(cards WIN32 ${SOURCES})
+add_executable(cards WIN32
+		main.cpp
+		CardManager.hpp
+		CardManager.cpp
+		CardLearner.hpp
+		CardLearner.cpp)
+
 target_link_libraries(cards PRIVATE nlohmann_json::nlohmann_json wx::core wx::base)
+
+find_package(wxWidgets CONFIG REQUIRED)
 
 file(GLOB RESOURCES "cards.json")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cards.json
