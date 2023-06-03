@@ -1,6 +1,6 @@
 #include <wx/wx.h>
 
-#include "CardLearner.hpp"
+#include "card_learner.hpp"
 
 class MyApp : public wxApp {
 public:
@@ -17,11 +17,14 @@ private:
   void SetupMenu();
   void BuildUI();
 
+  void RefsreshCard();
+
   void OnClickQuest(wxCommandEvent&);
   void OnClickCheck(wxCommandEvent&);
   void OnClickAns(wxCommandEvent&);
   bool DeckEnded();
 
+  void RenameDeck(wxCommandEvent&);
   void SelectDeck(wxCommandEvent&);
 
   wxStaticText* question;
@@ -33,7 +36,7 @@ private:
 
   CardLearner deck;
 
-  std::vector<std::pair<std::string, int>> deck_menu_id;
+  std::vector<std::pair<wxString, int>> deck_menu_id;
 
   bool first_click = true;
   bool checked = false;
@@ -55,7 +58,7 @@ EVT_BUTTON(ans_id, MyFrame::OnClickAns)
 wxEND_EVENT_TABLE()
 
 bool MyApp::OnInit() {
-  MyFrame* frame = new MyFrame("Flashcard app", wxDefaultPosition, wxDefaultSize);
+  MyFrame* frame = new MyFrame("Карточки", wxDefaultPosition, wxDefaultSize);
   frame->Show(true);
   return true;
 }
@@ -78,38 +81,43 @@ void MyFrame::SetupMenu() {
     this->Bind(wxEVT_MENU, &MyFrame::SelectDeck, this);
   }
 
-  wxMenu* deck_menu = new wxMenu();
-  deck_menu->AppendSubMenu(deck_submenu, "&Select deck");
+  wxMenu* select_menu = new wxMenu();
+  wxMenu* rename_submenu = new wxMenu();
 
-  menu_bar->Append(deck_menu, "&Options");
+  int id = rename_submenu->Append(wxID_ANY, "Изменить...\tCtrl+R")->GetId();
+  this->Bind(wxEVT_MENU, &MyFrame::RenameDeck, this, id);
+
+  select_menu->AppendSubMenu(rename_submenu, "&Сменить название колоды");
+  select_menu->AppendSubMenu(deck_submenu, "&SВыбрать колоду");
+  menu_bar->Append(select_menu, "&Опции");
 
   SetMenuBar(menu_bar);
 }
 
 void MyFrame::BuildUI() {
   wxPanel* panel_top_left = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(350, 200));
-  panel_top_left->SetBackgroundColour(wxColor(238, 233, 207));
+  //panel_top_left->SetBackgroundColour(wxColor(238, 233, 207));
 
   wxPanel* panel_top_right = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(350, 200));
-  panel_top_right->SetBackgroundColour(wxColor(235, 202, 205));
+  //panel_top_right->SetBackgroundColour(wxColor(235, 202, 205));
 
   wxPanel* panel_bottom = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(350, 200));
-  panel_bottom->SetBackgroundColour(wxColor(201, 224, 232));
+  //panel_bottom->SetBackgroundColour(wxColor(201, 224, 232));
 
   auto title_font = wxFont(wxNORMAL_FONT->GetPointSize() * 1.7, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
   auto text_font = wxFont(wxNORMAL_FONT->GetPointSize() + 1, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL);
 
-  question = new wxStaticText(panel_top_left, wxID_ANY, "Question: ");
+  question = new wxStaticText(panel_top_left, wxID_ANY, "Вопрос: ");
   question->SetFont(title_font);
 
   question_text = new wxTextCtrl(panel_top_left, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-  question_text->SetValue("Question will be displayed here");
+  question_text->SetValue("Вопрос будет показан здесь");
 
-  answer = new wxStaticText(panel_top_right, wxID_ANY, "Your\nanswer: ");
+  answer = new wxStaticText(panel_top_right, wxID_ANY, "Ваш\nответ: ");
   answer->SetFont(title_font);
 
   answer_text = new wxTextCtrl(panel_top_right, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
-  answer_text->SetHint("Type your answer here...");
+  answer_text->SetHint("Напишите ответ...");
 
   checker = new wxStaticText(panel_bottom, wxID_ANY, "");
   checker->SetFont(text_font);
@@ -126,9 +134,9 @@ void MyFrame::BuildUI() {
   ans_sizer->Add(answer_text, 1, wxCENTER | wxRIGHT, 40);
   panel_top_right->SetSizer(ans_sizer);
 
-  auto quest_button = new wxButton(panel_bottom, quest_id, "Show random question");
-  auto check_button = new wxButton(panel_bottom, check_id, "Check answer");
-  auto ans_button = new wxButton(panel_bottom, ans_id, "Show correct answer");
+  auto quest_button = new wxButton(panel_bottom, quest_id, "Случайный вопрос");
+  auto check_button = new wxButton(panel_bottom, check_id, "Проверить ответ");
+  auto ans_button = new wxButton(panel_bottom, ans_id, "Показать правильный ответ");
 
   wxBoxSizer* checker_sizer = new wxBoxSizer(wxVERTICAL);
   checker_sizer->Add(checker, 0, wxALIGN_LEFT);
@@ -162,7 +170,7 @@ void MyFrame::OnClickQuest(wxCommandEvent&) {
     if (checked) {
       deck.EraseCurrentCard();
       this->answer_text->SetValue("");
-      this->question_text->SetValue(deck.GetCard().first);
+      this->question_text->SetValue(deck.GetQuestion());
     }
 
     else if (!show || !checked) {
@@ -170,17 +178,17 @@ void MyFrame::OnClickQuest(wxCommandEvent&) {
       std::string user_ans = user_ans_wx.ToStdString();
 
       if (user_ans == "") {
-        this->checker->SetLabel("You didn't type an answer!");
+        this->checker->SetLabel("Вы не написали ответ!");
       }
 
       else {
-        this->checker->SetLabel("You didn't check your answer!");
+        this->checker->SetLabel("Вы не провверили ответ!");
       }
     }
   }
 
   else {
-    this->question_text->SetValue(deck.GetCard().first);
+    this->question_text->SetValue(deck.GetQuestion());
     first_click = false;
   }
 
@@ -193,15 +201,15 @@ void MyFrame::OnClickCheck(wxCommandEvent&) {
   }
 
   if (!first_click) {
-    wxString user_ans_wx = answer_text->GetValue();
-    std::string user_ans = user_ans_wx.ToStdString();
-    std::string expected_ans = deck.GetCard().second;
+    std::wstring user_ans = answer_text->GetValue().ToStdWstring();
+    std::wstring expected_ans = deck.GetAnswer();
+
 
     if (user_ans == "") {
-      this->checker->SetLabel("You didn't type an answer!");
+      this->checker->SetLabel("Вы не написали ответ!");
     }
     else if (deck.CheckUserAnswer(user_ans, expected_ans)) {
-      this->checker->SetLabel("Correct answer");
+      this->checker->SetLabel("Правильный ответ");
       checked = true;
 
       if (deck.GetDeckSize() - 1 == 0) {
@@ -209,13 +217,13 @@ void MyFrame::OnClickCheck(wxCommandEvent&) {
       }
     }
     else {
-      this->checker->SetLabel("Wrong answer");
+      this->checker->SetLabel("Неправильный ответ");
       checked = true;
     }
   }
   
   else {
-    this->checker->SetLabel("You didn't get a question!");
+    this->checker->SetLabel("Вы не получили вопрос!");
   }
 }
 
@@ -227,20 +235,21 @@ void MyFrame::OnClickAns(wxCommandEvent&) {
   if (!first_click) {
     show = true;
     checked = true;
-    this->checker->SetLabel("The correct answer is shown");
-    this->answer_text->SetValue(deck.GetCard().second);
+    this->checker->SetLabel("Показан правильный ответ");
+    this->answer_text->SetValue(this->deck.GetAnswer());
 
     return;
   }
 
-  this->checker->SetLabel("You didn't get a question!");
+  this->checker->SetLabel("Вы не получили вопрос!");
+  this->answer_text->SetLabel("");
 }
 
 bool MyFrame::DeckEnded() {
   if (deck.GetDeckSize() == 0) {
     this->answer_text->SetValue("");
-    question_text->SetValue("Question will be displayed here");
-    wxMessageBox("The deck has ended", "Message", wxOK);
+    question_text->SetValue("Вопрос будет показан здесь");
+    wxMessageBox("Текущая колода пуста", "Сообщение", wxOK);
 
     return true;
   }
@@ -248,16 +257,36 @@ bool MyFrame::DeckEnded() {
   return false;
 }
 
+void MyFrame::RenameDeck(wxCommandEvent&) {
+  wxMessageBox("in progress...", "rename will be here", wxOK);
+}
+
 void MyFrame::SelectDeck(wxCommandEvent& e) {
-  std::string selected = "";
+  RefsreshCard();
+
+  std::wstring selected = deck.GetDeckName();
   int id = e.GetId();
 
   for (auto& it : deck_menu_id) {
     if (id == it.second) {
       selected = it.first;
+
+      wxString msg = "Выбрана колода: ";
+      msg += selected;
+      this->checker->SetLabel(msg);
+
       break;
     }
   }
 
   deck.SetCurrentDeck(selected);
+}
+
+void MyFrame::RefsreshCard() {
+  first_click = true;
+  checked = false;
+  show = false;
+  this->question_text->SetValue("");
+  this->answer_text->SetValue("");
+  this->checker->SetLabel("");
 }

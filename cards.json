@@ -1,8 +1,8 @@
 {
   "decks": {
-    "All": 0,
-    "Maths": 1,
-    "Capitals":  2
+    "Все": 0,
+    "Математика": 1,
+    "Столицы":  2
   },
   "cards": [
     {
@@ -50,20 +50,20 @@
     {
       "id": 7,
       "deck": [ 2 ],
-      "question": "The capital of Russian Federation",
-      "answer": "Moscow"
+      "question": "Столица Российской Федерации",
+      "answer": "Москва"
     },
     {
       "id": 8,
       "deck": [ 2 ],
-      "question": "The capital of Japan",
-      "answer": "Tokyo"
+      "question": "Столица Японии",
+      "answer": "Токио"
     },
     {
       "id": 9,
       "deck": [ 2 ],
-      "question": "The capotal of Australia",
-      "answer": "Sydney"
+      "question": "Столица Китая",
+      "answer": "Пекин"
     }
   ]
 }

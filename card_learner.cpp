@@ -1,4 +1,4 @@
-﻿#include "CardLearner.hpp"
+﻿#include "card_learner.hpp"
 
 #include <nlohmann/json.hpp>
 
@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 using json = nlohmann::ordered_json;
-using Flashcard = std::pair<std::string, std::string>;
+using Flashcard = std::pair<std::wstring, std::wstring>;
 using CardsContainer = std::vector<Flashcard>;
 
 void CardLearner::EraseCurrentCard() {
@@ -26,15 +26,15 @@ Flashcard CardLearner::GetCard() {
   return card;
 }
 
-std::vector<std::string> CardLearner::GetAllDecks() {
+std::vector<std::wstring> CardLearner::GetAllDecks() {
   return cards.GetAllDecks();
 }
 
-void CardLearner::SetCurrentDeck(std::string& deck_name) {
+void CardLearner::SetCurrentDeck(std::wstring& deck_name) {
   deck_name_ = deck_name;
   study_deck_ = cards.GetDeck(cards.GetDeckId(deck_name));
 }
 
-const bool CardLearner::CheckUserAnswer(std::string& user_ans, std::string& card_ans) {
+const bool CardLearner::CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans) {
   return user_ans == card_ans;
 }

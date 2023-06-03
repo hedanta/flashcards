@@ -1,10 +1,8 @@
 ﻿
 #include <nlohmann/json.hpp>
 
-#include <unordered_map>
-
 using json = nlohmann::ordered_json;
-using Flashcard = std::pair<std::string, std::string>;
+using Flashcard = std::pair<std::wstring, std::wstring>;
 using CardsContainer = std::vector<Flashcard>;
 
 // управление карточками
@@ -27,15 +25,15 @@ public:
   const void WriteToCardsFile(json& data);
 
   const int RandomNum(const int& max_n);
-  const int EncodeName(std::string& deck_name);
+  const int EncodeName(std::wstring& deck_name);
 
-  const void CreateDeck(std::string& deck_name);
-  const int GetDeckId(std::string& deck_name);
-  std::vector<std::string> GetAllDecks();
+  const void CreateDeck(std::wstring& deck_name);
+  const int GetDeckId(std::wstring& deck_name);
+  std::vector<std::wstring> GetAllDecks();
 
   CardsContainer GetDeck(const int& deck_id);
 
   const void AddToDeck(int card_id, int deck_id);
   const void RemoveFromDeck(int card_id, int deck_id);
-  const void RenameDeck(std::string previous_name, std::string new_name);
+  const void RenameDeck(std::wstring previous_name, std::wstring new_name);
 };
