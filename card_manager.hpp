@@ -2,8 +2,7 @@
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::ordered_json;
-using Flashcard = std::pair<std::wstring, std::wstring>;
-using CardsContainer = std::vector<Flashcard>;
+using CardsContainer = std::vector<std::pair<std::wstring, std::wstring>>;
 
 // управление карточками
 class CardManager {
@@ -24,16 +23,17 @@ public:
   const json ReadFromCardsFile();
   const void WriteToCardsFile(json& data);
 
-  const int RandomNum(const int& max_n);
-  const int EncodeName(std::wstring& deck_name);
+  int RandomNum(int max_n);
+  std::string EncodeName(std::wstring& deck_name);
 
   const void CreateDeck(std::wstring& deck_name);
-  const int GetDeckId(std::wstring& deck_name);
-  std::vector<std::wstring> GetAllDecks();
+  std::wstring GetNameFromId(std::string& deck_id);
 
-  CardsContainer GetDeck(const int& deck_id);
+  std::vector<std::pair<std::string, std::wstring>> GetAllDecks();
 
-  const void AddToDeck(int card_id, int deck_id);
-  const void RemoveFromDeck(int card_id, int deck_id);
-  const void RenameDeck(std::wstring previous_name, std::wstring new_name);
+  CardsContainer GetDeck(std::string deck_id);
+
+  const void AddToDeck(int card_id, std::string deck_id);
+  const void RemoveFromDeck(int card_id, std::string deck_id);
+  const void RenameDeck(std::string deck_id, std::wstring new_name);
 };

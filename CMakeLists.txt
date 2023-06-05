@@ -16,7 +16,8 @@ add_executable(cards WIN32
 		card_manager.hpp
 		"card_manager.cpp"
 		card_learner.hpp
-		"card_learner.cpp")
+		"card_learner.cpp"
+    main.manifest)
 
 target_link_libraries(cards PRIVATE nlohmann_json::nlohmann_json wx::core wx::base)
 

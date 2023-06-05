@@ -14,34 +14,37 @@ namespace {
 }
 
 class CardLearner {
-private:
+public:
   CardManager cards;
-  std::wstring deck_name_{Converter.from_bytes("All")};
-  CardsContainer study_deck_{ cards.GetDeck(cards.GetDeckId(deck_name_)) };
+
+private:
+  std::string deck_id_{ "0" };
+  CardsContainer study_deck_{ cards.GetDeck(deck_id_) };
   Flashcard current_card_;
 
 public:
   CardLearner() = default;
 
-  CardLearner(std::wstring& deck_name)
+  CardLearner(std::string& deck_id)
     : cards{}
-    , deck_name_{deck_name}
-    , study_deck_{ cards.GetDeck(cards.GetDeckId(deck_name)) }
+    , deck_id_{deck_id}
+    , study_deck_{ cards.GetDeck(deck_id_) }
     , current_card_{}
   {};
 
   ~CardLearner() = default;
   
-  std::wstring GetDeckName() { return deck_name_; }
-  const int GetDeckSize() {  return study_deck_.size();  }
-  std::vector<std::wstring> GetAllDecks();
-  void SetCurrentDeck(std::wstring& deck_name);
+  void SetCurrentDeck(std::string& deck_id);
 
+  std::wstring GetDeckName();
+  std::wstring GetDeckNameFromId(std::string& deck_id);
+  std::string GetDeckId();
+  const int GetDeckSize();
   Flashcard GetCard();
-
   std::wstring GetQuestion() { return GetCard().first; }
   std::wstring GetAnswer() { return GetCard().second; }
 
   const bool CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans);
+
   void EraseCurrentCard();
 };

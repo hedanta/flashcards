@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
-#include <unordered_map>
 
 using json = nlohmann::ordered_json;
 using Flashcard = std::pair<std::wstring, std::wstring>;
@@ -16,23 +15,34 @@ void CardLearner::EraseCurrentCard() {
 }
 
 Flashcard CardLearner::GetCard() {
-  int deck_size = CardLearner::GetDeckSize();
   Flashcard card;
 
-  if (deck_size > 0) {
+  if (GetDeckSize() > 0) {
     card = study_deck_.back();
   }
 
   return card;
 }
 
-std::vector<std::wstring> CardLearner::GetAllDecks() {
-  return cards.GetAllDecks();
+std::wstring CardLearner::GetDeckName() { 
+  return cards.GetNameFromId(deck_id_); 
 }
 
-void CardLearner::SetCurrentDeck(std::wstring& deck_name) {
-  deck_name_ = deck_name;
-  study_deck_ = cards.GetDeck(cards.GetDeckId(deck_name));
+std::wstring CardLearner::GetDeckNameFromId(std::string& deck_id) {
+  return cards.GetNameFromId(deck_id);
+}
+
+const int CardLearner::GetDeckSize() { 
+  return study_deck_.size(); 
+}
+
+std::string CardLearner::GetDeckId() {
+  return deck_id_;
+}
+
+void CardLearner::SetCurrentDeck(std::string& deck_id) {
+  deck_id_ = deck_id;
+  study_deck_ = cards.GetDeck(deck_id_);
 }
 
 const bool CardLearner::CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans) {
