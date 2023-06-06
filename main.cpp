@@ -124,6 +124,8 @@ void MyFrame::SetupMenu() {
 }
 
 void MyFrame::BuildUI() {
+  //wxNotebook(this, wxID_ANY, wxPoint(160, 144), wxDefaultSize, 0, _T("ID_NOTEBOOK1"));
+
   wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
 
   wxPanel* card_panel = new wxPanel(this, wxID_ANY);
@@ -290,17 +292,21 @@ void MyFrame::RenameDeck(wxCommandEvent&) {
   std::wstring current_name = deck.GetDeckName();
   wxString msg = "Введите новое название для колоды " + current_name;
 
-  auto new_name = wxGetTextFromUser(msg, "Редактор");
+  wxTextEntryDialog rename(this, msg, "Введите новое название", "", wxOK | wxNO);
+  rename.ShowModal();
+
+  auto new_name = rename.GetValue();
   
   if (new_name != "") {
-    deck.cards.RenameDeck(deck.GetDeckId(), new_name.ToStdWstring());
-    
     msg = "Название изменено на " + new_name;
-    wxMessageBox(msg, "Сообщение", wxOK);
-
-    std::wstring renamed_deck = new_name.ToStdWstring();
-
-    SetupMenu();
+    
+    if (wxMessageBox(msg, "Сообщение", wxOK | wxCANCEL) == wxOK) {
+      deck.cards.RenameDeck(deck.GetDeckId(), new_name.ToStdWstring());
+      SetupMenu();
+    }
+    else {
+      wxMessageBox("Смена названия отменена", "Сообщение", wxOK);
+    }
   }
 }
 
