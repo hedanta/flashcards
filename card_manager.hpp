@@ -1,39 +1,106 @@
-﻿
+﻿#include "deck_manager.hpp"
+
 #include <nlohmann/json.hpp>
 
-using json = nlohmann::ordered_json;
-using CardsContainer = std::vector<std::pair<std::wstring, std::wstring>>;
+#include <codecvt>
+#include <random>
 
-// управление карточками
+using json = nlohmann::ordered_json;
+using Flashcard = std::pair<std::wstring, std::wstring>;
+using CardsContainer = std::vector<Flashcard>;
+
+namespace {
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> Converter;
+}
+
+
+/*!
+* @brief Класс изучения карточек
+* 
+* Позволяет чето.
+*/
 class CardManager {
+public:
+  DeckManager cards;
+
 private:
-  std::string path_to_file_ = "cards.json";
+  std::string deck_id_{ "0" };
+  CardsContainer study_deck_{ cards.GetDeck(deck_id_) };
+  Flashcard current_card_;
 
 public:
-  CardManager() = default;
+  CardManager(); ///< Конструктор по умолчанию
 
-  CardManager(const CardManager&) {};
-
-  CardManager(std::string& path)
-    : path_to_file_{ path }
+  /*!
+  * @brief Конструктор по идентифицатору колоды
+  * 
+  * Создаёт экземпляр класса, в котором данная
+  * колода является текущей
+  * 
+  * @param deck_id Идентификатор колоды
+  */
+  CardManager(std::string& deck_id)
+    : cards{}
+    , deck_id_{deck_id}
+    , study_deck_{ cards.GetDeck(deck_id_) }
+    , current_card_{}
   {};
 
-  ~CardManager() = default;
+  ~CardManager(); ///< Деструктор по умолчанию
+  
+  /*!
+  * @brief Устанавливает текущую колоду
+  * 
+  * Устанавливает в качестве текущей колоду,
+  * соответствующую данному идентификатору
+  * @param deck_id Идентификатор колоды
+  */
+  void SetCurrentDeck(std::string& deck_id);
 
-  const json ReadFromCardsFile();
-  const void WriteToCardsFile(json& data);
+  std::wstring GetDeckName();
+  std::wstring GetDeckNameFromId(std::string& deck_id);
 
-  int RandomNum(int max_n);
-  std::string EncodeName(std::wstring& deck_name);
+  /*!
+  * @brief Получает идентификатор колоды
+  * @return Возвращает идентификатор текущей колоды
+  */
+  std::string GetDeckId();
 
-  const void CreateDeck(std::wstring& deck_name);
-  std::wstring GetNameFromId(std::string& deck_id);
+  /*!
+  * @brief Получает размер колоды
+  * @return Возвращает размер текущей колоды
+  */
+  const int GetDeckSize();
 
-  std::vector<std::pair<std::string, std::wstring>> GetAllDecks();
+  /*!
+  * @brief Получает карточку
+  * @return Возвращает пару "вопрос - ответ"
+  */
+  Flashcard GetCard();
 
-  CardsContainer GetDeck(std::string deck_id);
+  /*!
+  * @brief Получает вопрос
+  * @return Возвращает вопрос из карточки
+  */
+  std::wstring GetQuestion();
 
-  const void AddToDeck(int card_id, std::string deck_id);
-  const void RemoveFromDeck(int card_id, std::string deck_id);
-  const void RenameDeck(std::string deck_id, std::wstring new_name);
+  /*!
+  * @brief Получает ответ
+  * @return Возвращает ответ из карточки
+  */
+  std::wstring GetAnswer();
+  
+  /*!
+  * @brief Проверяет ответ
+  * 
+  * Проверяет данный пользователем ответ
+  * @param user_ans Ответ пользователя
+  * @param card_ans Ожидаемый ответ из карточки
+  * @return Возвращает True, если ответ пользователя верный, 
+  * в противном случае False
+  */
+  const bool CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans);
+
+  /// @private
+  void EraseCurrentCard();
 };

@@ -3,201 +3,60 @@
 #include <nlohmann/json.hpp>
 
 #include <algorithm>
-#include <codecvt>
 #include <iostream>
 #include <fstream>
-#include <random>
 
 using json = nlohmann::ordered_json;
-using CardsContainer = std::vector<std::pair<std::wstring, std::wstring>>;
+using Flashcard = std::pair<std::wstring, std::wstring>;
+using CardsContainer = std::vector<Flashcard>;
 
-namespace {
-  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> Converter;
+CardManager::CardManager() = default;
+
+CardManager::~CardManager() = default;
+
+void CardManager::EraseCurrentCard() {
+  study_deck_.pop_back();
 }
 
-// чтение из json
-const json CardManager::ReadFromCardsFile() {
-  setlocale(LC_ALL, "ru");
-  std::ifstream cards_file;
-  cards_file.exceptions(std::ifstream::badbit);
+Flashcard CardManager::GetCard() {
+  Flashcard card;
 
-  json data;
-
-  try {
-    cards_file.open(path_to_file_);
-    data = json::parse(cards_file);
+  if (GetDeckSize() > 0) {
+    card = study_deck_.back();
   }
 
-  catch (std::ifstream::failure& e) {
-    std::cerr << "Exception opening/reading file" << std::endl;
-  }
-
-  cards_file.close();
-  return data;
+  return card;
 }
 
-// запись в json
-const void CardManager::WriteToCardsFile(json& data) {
-  std::ofstream cards_edit;
-  cards_edit.exceptions(std::ofstream::badbit);
-
-  try {
-    cards_edit.open(path_to_file_);
-    cards_edit << std::setw(2) << data << std::endl;
-  }
-
-  catch (std::ofstream::failure const &e) {
-    std::cerr << "Exception opening/writing to file" << std::endl;
-  }
-
-  cards_edit.close();
+std::wstring CardManager::GetDeckName() {
+  return cards.GetNameFromId(deck_id_); 
 }
 
- int CardManager::RandomNum(int max_n) {
-  std::random_device random;
-  std::mt19937 gen(random());
-  std::uniform_int_distribution<> dis(0, max_n);
-
-  int num = dis(gen);
-
-  return num;
+std::wstring CardManager::GetDeckNameFromId(std::string& deck_id) {
+  return cards.GetNameFromId(deck_id);
 }
 
-std::string CardManager::EncodeName(std::wstring& deck_name) {
-	return std::to_string(RandomNum(12345));
+const int CardManager::GetDeckSize() {
+  return study_deck_.size(); 
 }
 
-// создание колоды
-const void CardManager::CreateDeck(std::wstring& deck_name) {
-  json data = ReadFromCardsFile();
-
-  // setting deck id
-  bool found = false;
-  std::wstring w_deck;
-  for (auto& it : data["decks"].items()) {
-    w_deck = Converter.from_bytes(it.value());
-
-    if (w_deck == deck_name && !found) {
-      std::cerr << "This deck already exists!" << std::endl;
-      found = true;
-    }
-  }
-
-  if (!found) {
-    std::string deck_enc = EncodeName(deck_name);
-    std::string deck_name_utf = Converter.to_bytes(deck_name);
-    json edits = { std::make_pair(deck_enc, deck_name_utf) };
-    data["decks"].insert(edits.begin(), edits.end());
-  }
-
-  WriteToCardsFile(data);
+std::string CardManager::GetDeckId() {
+  return deck_id_;
 }
 
-std::wstring CardManager::GetNameFromId(std::string& deck_id) {
-  json data = ReadFromCardsFile();
-
-  std::wstring deck_name;
-
-  for (auto& it : data["decks"].items()) {
-    if (deck_id == it.key()) {
-      deck_name = Converter.from_bytes(it.value());
-      return deck_name;
-    }
-  }
+std::wstring CardManager::GetQuestion() {
+  return GetCard().first; 
 }
 
-CardsContainer CardManager::GetDeck(std::string deck_id) {
-	std::ifstream file;
-    file.exceptions(std::ifstream::badbit);
-
-    CardsContainer deck{};
-
-    try {
-      file.open("cards.json");
-      json data = json::parse(file);
-
-      for (auto& el : data["cards"].items()) {
-        std::wstring w_quest = Converter.from_bytes(el.value()["question"]);
-        std::wstring w_ans = Converter.from_bytes(el.value()["answer"]);
-
-        for (auto& deck_el : el.value()["deck"].items()) {
-          if (deck_el.value() == deck_id) {
-            deck.push_back(std::make_pair(w_quest, w_ans));
-          }
-        }
-      }
-
-      std::random_device rd;
-      std::mt19937 g(rd());
-      
-      std::shuffle(deck.begin(), deck.end(), g);
-    }
-
-    catch (std::ifstream::failure& e) {
-      std::cerr << "Exception opening/reading file" << std::endl;
-    }
-
-    file.close();
-    return deck;
+std::wstring CardManager::GetAnswer() {
+  return GetCard().second; 
 }
 
-std::vector<std::pair<std::string, std::wstring>> CardManager::GetAllDecks() {
-  json data = ReadFromCardsFile();
-
-  std::vector<std::pair<std::string, std::wstring>> decks;
-  std::wstring w_deck;
-
-  for (auto& it : data["decks"].items()) {
-    w_deck = Converter.from_bytes(it.value());
-    decks.push_back(std::make_pair(it.key(), w_deck));
-  }
-
-  return decks;
+void CardManager::SetCurrentDeck(std::string& deck_id) {
+  deck_id_ = deck_id;
+  study_deck_ = cards.GetDeck(deck_id_);
 }
 
-// добавление карточки в колоду
-const void CardManager::AddToDeck(int card_id, std::string deck_id) {
-  json data = ReadFromCardsFile();
-
-  bool found = false;
-  for (auto& it : data["cards"][card_id]["deck"].items()) {
-    if (it.value() == deck_id && !found) {
-      std::cerr << "The card is already in the deck!" << std::endl;
-      found = true;
-    }
-  }
-
-  if (!found) {
-    data["cards"][card_id]["deck"].push_back(deck_id);
-  }
-
-  WriteToCardsFile(data);
-}
-
-// удаление карточки из колоды
-const void CardManager::RemoveFromDeck(int card_id, std::string deck_id) {
-  json data = ReadFromCardsFile();
-
-  // количество колод, в которых есть карточка
-  int deck_count = data["cards"][card_id]["deck"].size();
-
-  // ищем индекс колоды, чтобы стереть её
-  for (int deck_idx = 0; deck_idx < deck_count; deck_idx += 1) {
-    if (data["cards"][card_id]["deck"][deck_idx] == deck_id) {
-      data["cards"][card_id]["deck"].erase(deck_idx);
-      break;
-    }
-  }
-
-  WriteToCardsFile(data);
-}
-
-const void CardManager::RenameDeck(std::string deck_id, std::wstring w_new_name) {
-  json data = ReadFromCardsFile();
-
-  std::string new_name = Converter.to_bytes(w_new_name);
-
-  data["decks"].at(deck_id) = new_name;
-  
-  WriteToCardsFile(data);
+const bool CardManager::CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans) {
+  return user_ans == card_ans;
 }

@@ -17,10 +17,10 @@ set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 
 add_executable(cards WIN32
 		main.cpp
+		deck_manager.hpp
+		"deck_manager.cpp"
 		card_manager.hpp
 		"card_manager.cpp"
-		card_learner.hpp
-		"card_learner.cpp"
     main.manifest)
 
 target_link_libraries(cards PRIVATE nlohmann_json::nlohmann_json wx::core wx::base)
