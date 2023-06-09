@@ -1,5 +1,4 @@
-﻿
-#include <nlohmann/json.hpp>
+﻿#include <nlohmann/json.hpp>
 
 using json = nlohmann::ordered_json;
 using CardsContainer = std::vector<std::pair<std::wstring, std::wstring>>;

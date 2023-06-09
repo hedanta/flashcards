@@ -1,12 +1,9 @@
-﻿#include "quiz_manager.hpp"
-
-#include <nlohmann/json.hpp>
+﻿#include <quiz/quiz_manager.hpp>
 
 #include <algorithm>
 #include <iostream>
 #include <fstream>
 
-using json = nlohmann::ordered_json;
 using Flashcard = std::pair<std::wstring, std::wstring>;
 using CardsContainer = std::vector<Flashcard>;
 
@@ -23,6 +20,10 @@ QuizManager::~QuizManager() = default;
 
 void QuizManager::EraseCurrentCard() {
   study_deck_.pop_back();
+}
+
+const DeckContainer QuizManager::LoadAllDecks() {
+  return cards.GetAllDecks();
 }
 
 const std::string QuizManager::GetCurrentDeckId() {
@@ -62,6 +63,10 @@ const std::wstring QuizManager::GetAnswer() {
 void QuizManager::SetCurrentDeck(std::string& deck_id) {
   deck_id_ = deck_id;
   study_deck_ = cards.GetDeck(deck_id_);
+}
+
+const void QuizManager::RenameCurrentDeck(const std::string& deck_id, std::wstring& new_name) {
+  cards.RenameDeck(deck_id, new_name);
 }
 
 const bool QuizManager::CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans) {

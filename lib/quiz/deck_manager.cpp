@@ -1,6 +1,4 @@
-﻿#include "deck_manager.hpp"
-
-#include <nlohmann/json.hpp>
+﻿#include <quiz/deck_manager.hpp>
 
 #include <algorithm>
 #include <codecvt>
@@ -102,7 +100,7 @@ const void DeckManager::CreateDeck(std::wstring& deck_name) {
 const std::wstring DeckManager::GetNameFromId(std::string& deck_id) {
   json data = ReadFromCardsFile();
 
-  std::wstring deck_name;
+  std::wstring deck_name = L"";
 
   for (auto& it : data["decks"].items()) {
     if (deck_id == it.key()) {

@@ -1,11 +1,8 @@
 ﻿#include "deck_manager.hpp"
 
-#include <nlohmann/json.hpp>
-
 #include <codecvt>
 #include <random>
 
-using json = nlohmann::ordered_json;
 using Flashcard = std::pair<std::wstring, std::wstring>;
 using CardsContainer = std::vector<Flashcard>;
 
@@ -66,6 +63,8 @@ public:
   */
   const int GetCurrentDeckSize();
 
+  const DeckContainer LoadAllDecks();
+
   /*!
   * @brief Получает идентификатор колоды
   * 
@@ -123,6 +122,13 @@ public:
   * в противном случае False
   */
   const bool CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans);
+
+  /*!
+  * @brief Меняет название колоды
+  * @param deck_id Идентификатор колоды
+  * @param new_name Новое название колоды
+  */
+  const void RenameCurrentDeck(const std::string& deck_id, std::wstring& new_name);
 
   /// @private
   void EraseCurrentCard();
