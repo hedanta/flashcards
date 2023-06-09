@@ -21,7 +21,7 @@ add_executable(cards WIN32
 		"deck_manager.cpp"
 		quiz_manager.hpp
 		"quiz_manager.cpp"
-    main.manifest)
+    main.manifest "main.hpp")
 
 target_link_libraries(cards PRIVATE nlohmann_json::nlohmann_json wx::core wx::base)
 
@@ -30,3 +30,5 @@ find_package(wxWidgets CONFIG REQUIRED)
 file(GLOB RESOURCES "cards.json")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cards.json
    ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+
+install()

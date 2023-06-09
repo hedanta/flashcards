@@ -25,19 +25,19 @@ void QuizManager::EraseCurrentCard() {
   study_deck_.pop_back();
 }
 
-std::string QuizManager::GetCurrentDeckId() {
+const std::string QuizManager::GetCurrentDeckId() {
   return deck_id_;
 }
 
-std::wstring QuizManager::GetDeckNameFromId(std::string& deck_id) {
+const std::wstring QuizManager::GetDeckNameFromId(std::string& deck_id) {
   return cards.GetDeckNameFromId(deck_id);
 }
 
-std::wstring QuizManager::GetCurrentDeckName() {
+const std::wstring QuizManager::GetCurrentDeckName() {
   return cards.GetDeckNameFromId(deck_id_);
 }
 
-Flashcard QuizManager::GetCard() {
+const Flashcard QuizManager::GetCard() {
   Flashcard card;
 
   if (GetCurrentDeckSize() > 0) {
@@ -51,11 +51,11 @@ const int QuizManager::GetCurrentDeckSize() {
   return study_deck_.size(); 
 }
 
-std::wstring QuizManager::GetQuestion() {
+const std::wstring QuizManager::GetQuestion() {
   return GetCard().first; 
 }
 
-std::wstring QuizManager::GetAnswer() {
+const std::wstring QuizManager::GetAnswer() {
   return GetCard().second; 
 }
 

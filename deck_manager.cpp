@@ -99,7 +99,7 @@ const void DeckManager::CreateDeck(std::wstring& deck_name) {
   WriteToCardsFile(data);
 }
 
-std::wstring DeckManager::GetNameFromId(std::string& deck_id) {
+const std::wstring DeckManager::GetNameFromId(std::string& deck_id) {
   json data = ReadFromCardsFile();
 
   std::wstring deck_name;
@@ -112,7 +112,7 @@ std::wstring DeckManager::GetNameFromId(std::string& deck_id) {
   }
 }
 
-CardsContainer DeckManager::GetDeck(std::string& deck_id) {
+const CardsContainer DeckManager::GetDeck(std::string& deck_id) {
 	std::ifstream file;
     file.exceptions(std::ifstream::badbit);
 
@@ -147,7 +147,7 @@ CardsContainer DeckManager::GetDeck(std::string& deck_id) {
     return deck;
 }
 
-DeckContainer DeckManager::GetAllDecks() {
+const DeckContainer DeckManager::GetAllDecks() {
   json data = ReadFromCardsFile();
 
   std::vector<std::pair<std::string, std::wstring>> decks;
@@ -161,7 +161,7 @@ DeckContainer DeckManager::GetAllDecks() {
   return decks;
 }
 
-std::wstring DeckManager::GetDeckNameFromId(std::string& deck_id) {
+const std::wstring DeckManager::GetDeckNameFromId(std::string& deck_id) {
   return GetNameFromId(deck_id);
 }
 

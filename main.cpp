@@ -1,6 +1,6 @@
 #include <wx/wx.h>
+#include "main.hpp"
 
-#include "quiz_manager.hpp"
 
 namespace {
   // trim from start (in place)
@@ -24,65 +24,8 @@ namespace {
   }
 }
 
-class MyApp : public wxApp {
-public:
-  virtual bool OnInit();
-};
-
 wxIMPLEMENT_APP(MyApp);
 
-class MyFrame : public wxFrame {
-public:
-  MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
-
-private:
-  void SetupMenu();
-  void BuildUI();
-
-  void RefsreshCard();
-
-  void OnUpdateOk(wxUpdateUIEvent&);
-
-  void OnClickQuest(wxCommandEvent&);
-  void OnClickCheck(wxCommandEvent&);
-  void OnClickAns(wxCommandEvent&);
-  bool DeckEnded();
-
-  void RenameDeck(wxCommandEvent&);
-  void SelectDeck(wxCommandEvent&);
-
-  wxStaticText* question;
-  wxStaticText* answer;
-  wxStaticText* checker;
-
-  wxTextCtrl* question_text;
-  wxTextCtrl* answer_text;
-  wxString new_name;
-
-  QuizManager cards;
-  DeckManager deck_manager;
-
-  std::vector<std::pair<std::string, int>> deck_menu_id;
-
-  bool first_click = true;
-  bool checked = false;
-  bool show = false;
-
-  wxDECLARE_EVENT_TABLE();
-};
-
-enum ButtonId {
-  quest_id = wxID_LAST + 2,
-  check_id = wxID_LAST,
-  ans_id
-};
-
-wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
-EVT_BUTTON(quest_id, MyFrame::OnClickQuest)
-EVT_BUTTON(check_id, MyFrame::OnClickCheck)
-EVT_BUTTON(ans_id, MyFrame::OnClickAns)
-EVT_UPDATE_UI(wxID_OK, MyFrame::OnUpdateOk)
-wxEND_EVENT_TABLE()
 
 bool MyApp::OnInit() {
   MyFrame* frame = new MyFrame("Карточки", wxDefaultPosition, wxDefaultSize);
@@ -122,8 +65,11 @@ void MyFrame::SetupMenu() {
   options_menu->AppendSubMenu(deck_submenu, "&Текущая колода");
   menu_bar->Append(options_menu, "&Опции");
 
-  int id = options_menu->Append(wxID_ANY, "&Редактор колоды\tCtrl+R")->GetId();
-  this->Bind(wxEVT_MENU, &MyFrame::RenameDeck, this, id);
+  int id_rename = options_menu->Append(wxID_ANY, "&Сменить имя колоды\tCtrl+R")->GetId();
+  this->Bind(wxEVT_MENU, &MyFrame::RenameDeck, this, id_rename);
+
+  /*int id_cards = options_menu->Append(wxID_ANY, "Редактор колоды&\tCtrl+E")->GetId();
+  this->Bind(wxEVT_MENU, &MyFrame::EditDeck, this, id_cards);*/
 
   SetMenuBar(menu_bar);
 }
@@ -356,4 +302,9 @@ void MyFrame::RefsreshCard() {
 
 void MyFrame::OnUpdateOk(wxUpdateUIEvent& event) {
   event.Enable(false);
+}
+
+void MyFrame::EditDeck(wxCommandEvent&) {
+  auto select_cards = new wxCheckBox(this, wxID_ANY, "Выберите карточки");
+  select_cards->Show();
 }

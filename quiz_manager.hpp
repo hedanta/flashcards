@@ -71,7 +71,7 @@ public:
   * 
   * @return Возвращает идентификатор текущей колоды
   */
-  std::string GetCurrentDeckId();
+  const std::string GetCurrentDeckId();
 
   /*!
   * @brief Получает название колоды
@@ -81,35 +81,35 @@ public:
   * @return Возвращает название колоды,
   * соответствующей данному идентификатору
   */
-  std::wstring GetDeckNameFromId(std::string& deck_id);
+  const std::wstring GetDeckNameFromId(std::string& deck_id);
 
   /*!
   * Получает название колоды
   * 
   * @return Возвращает название текущей колоды
   */
-  std::wstring GetCurrentDeckName();
+  const std::wstring GetCurrentDeckName();
 
   /*!
   * @brief Получает карточку
   * 
   * @return Возвращает пару "вопрос - ответ"
   */
-  Flashcard GetCard();
+  const Flashcard GetCard();
 
   /*!
   * @brief Получает вопрос
   * 
   * @return Возвращает вопрос из карточки
   */
-  std::wstring GetQuestion();
+  const std::wstring GetQuestion();
 
   /*!
   * @brief Получает ответ
   * 
   * @return Возвращает ответ из карточки
   */
-  std::wstring GetAnswer();
+  const std::wstring GetAnswer();
   
   /*!
   * @brief Проверяет ответ

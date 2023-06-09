@@ -61,20 +61,20 @@ public:
   * @param deck_id Идентификатор колоды
   * @return Название колоды, соответствующее данному идентификатору
   */
-  std::wstring GetNameFromId(std::string& deck_id);
+  const std::wstring GetNameFromId(std::string& deck_id);
 
   /*!
   * @brief Получает все имеющиеся колоды
   * @return Массив пар из всех колод и их идентификаторов
   */
-  DeckContainer GetAllDecks();
+  const DeckContainer GetAllDecks();
 
   /*!
   * @brief Получает карточки из колоды
   * @param deck_id Идентификатор колоды
   * @return Массив пар карточек вида "вопрос - ответ" из данной колоды
   */
-  CardsContainer GetDeck(std::string& deck_id);
+  const CardsContainer GetDeck(std::string& deck_id);
 
   /*!
   * @brief Получает название колоды
@@ -82,7 +82,7 @@ public:
   * @return Возвращает название колоды, соответствующей
   * данному идентификатору
   */
-  std::wstring GetDeckNameFromId(std::string& deck_id);
+  const std::wstring GetDeckNameFromId(std::string& deck_id);
 
   /// @private
   const void AddToDeck(const int& card_id, std::string& deck_id);
