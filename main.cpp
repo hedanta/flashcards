@@ -298,8 +298,9 @@ void MyFrame::RenameDeck(wxCommandEvent&) {
   wxString msg = "¬ведите новое название дл€ колоды " + current_name;
 
   wxTextEntryDialog rename(this, msg, "—мена названи€", "", wxOK);
-  new_name = rename.GetValue();
   rename.ShowModal();
+
+  new_name = rename.GetValue();
 
   std::wstring w_new_name = new_name.ToStdWstring();
   
