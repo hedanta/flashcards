@@ -17,19 +17,23 @@ namespace {
 /*!
 * @brief Класс изучения карточек
 * 
-* Позволяет чето.
+* Позволяет проводить сам квиз - 
+* устанавливать текущую колоду, получать случайную карточку,
+* проверять пользовательский ответ и т.д.
 */
-class CardManager {
-public:
-  DeckManager cards;
-
+class QuizManager {
 private:
+  DeckManager cards;
   std::string deck_id_{ "0" };
   CardsContainer study_deck_{ cards.GetDeck(deck_id_) };
   Flashcard current_card_;
 
 public:
-  CardManager(); ///< Конструктор по умолчанию
+
+  /*!
+  * Конструктор по умолчанию
+  */
+  QuizManager(); 
 
   /*!
   * @brief Конструктор по идентифицатору колоды
@@ -39,14 +43,12 @@ public:
   * 
   * @param deck_id Идентификатор колоды
   */
-  CardManager(std::string& deck_id)
-    : cards{}
-    , deck_id_{deck_id}
-    , study_deck_{ cards.GetDeck(deck_id_) }
-    , current_card_{}
-  {};
+  QuizManager(std::string& deck_id);
 
-  ~CardManager(); ///< Деструктор по умолчанию
+  /*!
+  * Деструктор по умолчанию
+  */
+  ~QuizManager();
   
   /*!
   * @brief Устанавливает текущую колоду
@@ -57,35 +59,54 @@ public:
   */
   void SetCurrentDeck(std::string& deck_id);
 
-  std::wstring GetDeckName();
-  std::wstring GetDeckNameFromId(std::string& deck_id);
+  /*!
+  * @brief Получает размер колоды
+  * 
+  * @return Возвращает размер текущей колоды
+  */
+  const int GetCurrentDeckSize();
 
   /*!
   * @brief Получает идентификатор колоды
+  * 
   * @return Возвращает идентификатор текущей колоды
   */
-  std::string GetDeckId();
+  std::string GetCurrentDeckId();
 
   /*!
-  * @brief Получает размер колоды
-  * @return Возвращает размер текущей колоды
+  * @brief Получает название колоды
+  * 
+  * @param deck_id Идентификатор колоды
+  * 
+  * @return Возвращает название колоды,
+  * соответствующей данному идентификатору
   */
-  const int GetDeckSize();
+  std::wstring GetDeckNameFromId(std::string& deck_id);
+
+  /*!
+  * Получает название колоды
+  * 
+  * @return Возвращает название текущей колоды
+  */
+  std::wstring GetCurrentDeckName();
 
   /*!
   * @brief Получает карточку
+  * 
   * @return Возвращает пару "вопрос - ответ"
   */
   Flashcard GetCard();
 
   /*!
   * @brief Получает вопрос
+  * 
   * @return Возвращает вопрос из карточки
   */
   std::wstring GetQuestion();
 
   /*!
   * @brief Получает ответ
+  * 
   * @return Возвращает ответ из карточки
   */
   std::wstring GetAnswer();
@@ -94,8 +115,10 @@ public:
   * @brief Проверяет ответ
   * 
   * Проверяет данный пользователем ответ
+  * 
   * @param user_ans Ответ пользователя
   * @param card_ans Ожидаемый ответ из карточки
+  * 
   * @return Возвращает True, если ответ пользователя верный, 
   * в противном случае False
   */

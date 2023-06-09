@@ -16,13 +16,21 @@ private:
   std::string path_to_file_ = "cards.json";
 
 public:
-  DeckManager() = default; ///< Конструктор по умолчанию
+  /*!
+  * Конструктор по умолчанию
+  */
+  DeckManager();
 
-  ~DeckManager() = default; ///< Деструктор по умолчанию
+  /*!
+  * Деструктор по умолчанию
+  */
+  ~DeckManager();
 
   /*!
   * @brief Читает данные из JSON-файла
+  * 
   * @return Десериализованный JSON объект
+  * 
   * @throw std::ifstream::failure В случае возникновения
   * ошибки открытия/чтения файла
   */
@@ -30,6 +38,7 @@ public:
 
   /*!
   * @brief Записывает данные в JSON-файл
+  * 
   * @throw std::ifstream::failure В случае возникновения
   * ошибки открытия/записи в файл
   */
@@ -66,6 +75,14 @@ public:
   * @return Массив пар карточек вида "вопрос - ответ" из данной колоды
   */
   CardsContainer GetDeck(std::string& deck_id);
+
+  /*!
+  * @brief Получает название колоды
+  * @param deck_id Идентификатор колоды
+  * @return Возвращает название колоды, соответствующей
+  * данному идентификатору
+  */
+  std::wstring GetDeckNameFromId(std::string& deck_id);
 
   /// @private
   const void AddToDeck(const int& card_id, std::string& deck_id);

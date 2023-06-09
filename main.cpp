@@ -1,6 +1,6 @@
 #include <wx/wx.h>
 
-#include "card_manager.hpp"
+#include "quiz_manager.hpp"
 
 namespace {
   // trim from start (in place)
@@ -59,7 +59,7 @@ private:
   wxTextCtrl* answer_text;
   wxString new_name;
 
-  CardManager cards;
+  QuizManager cards;
   DeckManager deck_manager;
 
   std::vector<std::pair<std::string, int>> deck_menu_id;
@@ -111,7 +111,7 @@ void MyFrame::SetupMenu() {
     deck_menu_id.push_back(std::make_pair(it.first, id));
     this->Bind(wxEVT_MENU, &MyFrame::SelectDeck, this);
 
-    if (it.first == cards.GetDeckId()) {
+    if (it.first == cards.GetCurrentDeckId()) {
       append_deck->Check(true);
     }
     
@@ -129,7 +129,6 @@ void MyFrame::SetupMenu() {
 }
 
 void MyFrame::BuildUI() {
-  //wxNotebook(this, wxID_ANY, wxPoint(160, 144), wxDefaultSize, 0, _T("ID_NOTEBOOK1"));
 
   wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -249,7 +248,7 @@ void MyFrame::OnClickCheck(wxCommandEvent&) {
       this->checker->SetLabel("Верно");
       checked = true;
 
-      if (cards.GetDeckSize() - 1 == 0) {
+      if (cards.GetCurrentDeckSize() - 1 == 0) {
         cards.EraseCurrentCard();
       }
     }
@@ -283,7 +282,7 @@ void MyFrame::OnClickAns(wxCommandEvent&) {
 }
 
 bool MyFrame::DeckEnded() {
-  if (cards.GetDeckSize() == 0) {
+  if (cards.GetCurrentDeckSize() == 0) {
     RefsreshCard();
     wxMessageBox("Текущая колода пуста", "Сообщение", wxOK);
 
@@ -294,7 +293,7 @@ bool MyFrame::DeckEnded() {
 }
 
 void MyFrame::RenameDeck(wxCommandEvent&) {
-  std::wstring current_name = cards.GetDeckName();
+  std::wstring current_name = cards.GetCurrentDeckName();
   wxString msg = "Введите новое название для колоды " + current_name;
 
   wxTextEntryDialog rename(this, msg, "Смена названия", "", wxOK);
@@ -312,7 +311,7 @@ void MyFrame::RenameDeck(wxCommandEvent&) {
     }
     else if (wxMessageBox(msg, "Сообщение", wxOK | wxCANCEL) == wxOK) {
 
-      deck_manager.RenameDeck(cards.GetDeckId(), w_new_name);
+      deck_manager.RenameDeck(cards.GetCurrentDeckId(), w_new_name);
       SetupMenu();
     }
     else {
@@ -324,15 +323,15 @@ void MyFrame::RenameDeck(wxCommandEvent&) {
 void MyFrame::SelectDeck(wxCommandEvent& e) {
   RefsreshCard();
 
-  std::wstring selected = cards.GetDeckName();
-  std::string selected_id = cards.GetDeckId();
+  std::wstring selected = L"";
+  std::string selected_id = "";
 
   int id = e.GetId();
 
   for (auto& it : deck_menu_id) {
     if (id == it.second) {
-      selected = cards.GetDeckNameFromId(it.first);
       selected_id = it.first;
+      selected = cards.GetDeckNameFromId(selected_id);
 
       wxString msg = "Выбрана колода ";
       msg += selected;

@@ -16,6 +16,10 @@ namespace {
   std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> Converter;
 }
 
+DeckManager::DeckManager() = default;
+
+DeckManager::~DeckManager() = default;
+
 // чтение из json
 const json DeckManager::ReadFromCardsFile() {
   setlocale(LC_ALL, "ru");
@@ -155,6 +159,10 @@ DeckContainer DeckManager::GetAllDecks() {
   }
 
   return decks;
+}
+
+std::wstring DeckManager::GetDeckNameFromId(std::string& deck_id) {
+  return GetNameFromId(deck_id);
 }
 
 // добавление карточки в колоду
