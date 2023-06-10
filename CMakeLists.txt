@@ -24,14 +24,14 @@ add_subdirectory(lib)
 
 target_link_libraries(cards PRIVATE nlohmann_json::nlohmann_json wx::core wx::base quiz_manager)
 
-target_include_directories(cards PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-        $<INSTALL_INTERFACE:src> 
-        )
-
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src DESTINATION bin)
+install(FILES cards.json DESTINATION bin)
 
 install(TARGETS cards DESTINATION bin)
+
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/ 
+        DESTINATION bin/
+        FILES_MATCHING 
+        PATTERN "*.dll")
 
 add_custom_target(install_${PROJECT_NAME}
         ${CMAKE_COMMAND} -DCMAKE_INSTALL_CONFIG_NAME=${CMAKE_BUILD_TYPE}
