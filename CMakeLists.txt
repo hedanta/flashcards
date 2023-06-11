@@ -17,12 +17,13 @@ set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 find_package(wxWidgets CONFIG REQUIRED)
 
 add_executable(cards WIN32
-		main.cpp
+		main_app.cpp
+main_app.h
     main.manifest)
 
 add_subdirectory(lib)
 
-target_link_libraries(cards PRIVATE nlohmann_json::nlohmann_json wx::core wx::base quiz_manager)
+target_link_libraries(cards PRIVATE wx::core wx::base quiz_manager)
 
 install(FILES cards.json DESTINATION bin)
 
@@ -38,6 +39,6 @@ add_custom_target(install_${PROJECT_NAME}
         -P cmake_install.cmake
         )
 
-#file(GLOB RESOURCES "cards.json")
-#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/cards.json
-#   ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+file(GLOB RESOURCES "cards.json")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cards.json
+   ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

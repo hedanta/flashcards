@@ -32,7 +32,7 @@ const json DeckManager::ReadFromCardsFile() {
   }
 
   catch (std::ifstream::failure& e) {
-    std::cerr << "Exception opening/reading file" << std::endl;
+    throw std::ifstream::badbit;
   }
 
   cards_file.close();
@@ -50,7 +50,7 @@ const void DeckManager::WriteToCardsFile(json& data) {
   }
 
   catch (std::ofstream::failure const &e) {
-    std::cerr << "Exception opening/writing to file" << std::endl;
+    throw std::ofstream::badbit;
   }
 
   cards_edit.close();
@@ -110,7 +110,7 @@ const std::wstring DeckManager::GetNameFromId(std::string& deck_id) {
   }
 }
 
-const CardsContainer DeckManager::GetDeck(std::string& deck_id) {
+const CardsContainer DeckManager::GetShuffledDeck(std::string& deck_id) {
 	std::ifstream file;
     file.exceptions(std::ifstream::badbit);
 
@@ -130,20 +130,50 @@ const CardsContainer DeckManager::GetDeck(std::string& deck_id) {
           }
         }
       }
-
-      std::random_device rd;
-      std::mt19937 g(rd());
-      
-      std::shuffle(deck.begin(), deck.end(), g);
     }
 
     catch (std::ifstream::failure& e) {
       std::cerr << "Exception opening/reading file" << std::endl;
     }
 
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(deck.begin(), deck.end(), g);
+
     file.close();
     return deck;
 }
+
+const CardsWithId DeckManager::GetCardsList(std::string& deck_id) {
+  std::ifstream file;
+  file.exceptions(std::ifstream::badbit);
+
+  CardsWithId cards_list{};
+
+  try {
+    file.open("cards.json");
+    json data = json::parse(file);
+
+    for (auto& el : data["cards"].items()) {
+      const int card_id = el.value()["id"];
+      std::wstring w_quest = Converter.from_bytes(el.value()["question"]);
+
+      for (auto& deck_el : el.value()["deck"].items()) {
+        if (deck_el.value() == deck_id) {
+          cards_list.push_back(std::make_pair(card_id, w_quest));
+        }
+      }
+    }
+  }
+
+  catch (std::ifstream::failure& e) {
+    std::cerr << "Exception opening/reading file" << std::endl;
+  }
+
+  file.close();
+  return cards_list;
+}
+
 
 const DeckContainer DeckManager::GetAllDecks() {
   json data = ReadFromCardsFile();
@@ -190,9 +220,9 @@ const void DeckManager::RemoveFromDeck(const int& card_id, std::string& deck_id)
   int deck_count = data["cards"][card_id]["deck"].size();
 
   // ищем индекс колоды, чтобы стереть её
-  for (int deck_idx = 0; deck_idx < deck_count; deck_idx += 1) {
-    if (data["cards"][card_id]["deck"][deck_idx] == deck_id) {
-      data["cards"][card_id]["deck"].erase(deck_idx);
+  for (auto it : data["cards"][card_id]["deck"]) {
+    if (it == deck_id) {
+      it = data["cards"][card_id]["deck"].erase(it);
       break;
     }
   }

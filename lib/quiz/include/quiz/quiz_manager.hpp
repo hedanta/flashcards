@@ -22,7 +22,7 @@ class QuizManager {
 private:
   DeckManager cards;
   std::string deck_id_{ "0" };
-  CardsContainer study_deck_{ cards.GetDeck(deck_id_) };
+  CardsContainer study_deck_{ cards.GetShuffledDeck(deck_id_) };
   Flashcard current_card_;
 
 public:
@@ -52,60 +52,73 @@ public:
   * 
   * Устанавливает в качестве текущей колоду,
   * соответствующую данному идентификатору
+  * 
   * @param deck_id Идентификатор колоды
   */
   void SetCurrentDeck(std::string& deck_id);
 
   /*!
   * @brief Получает размер колоды
-  * 
   * @return Возвращает размер текущей колоды
   */
   const int GetCurrentDeckSize();
 
+  /*!
+  * @brief Получает все имеющиеся колоды
+  * @return Возваращает массив пар из всех колод и их идентификаторов
+  */
   const DeckContainer LoadAllDecks();
 
   /*!
   * @brief Получает идентификатор колоды
-  * 
   * @return Возвращает идентификатор текущей колоды
   */
   const std::string GetCurrentDeckId();
 
   /*!
   * @brief Получает название колоды
-  * 
   * @param deck_id Идентификатор колоды
-  * 
   * @return Возвращает название колоды,
   * соответствующей данному идентификатору
   */
   const std::wstring GetDeckNameFromId(std::string& deck_id);
 
   /*!
-  * Получает название колоды
-  * 
+  * @brief Получает название колоды
   * @return Возвращает название текущей колоды
   */
   const std::wstring GetCurrentDeckName();
 
   /*!
+  * @brief Получает все карточки из колоды
+  * @return Возвращает все имеющиеся
+  * карточки
+  */
+  const CardsWithId GetCardsList();
+
+  /*!
+  * @brief Получает список карточек
+  * @param deck_id Идентификатор колоды
+  * @return Возвращает массив пар вида
+  * "Идентификатор карточки - вопрос" из
+  * текущей колоды
+  */
+  const CardsWithId GetCurrentCardsList();
+
+  /*!
   * @brief Получает карточку
-  * 
   * @return Возвращает пару "вопрос - ответ"
   */
   const Flashcard GetCard();
 
   /*!
   * @brief Получает вопрос
-  * 
   * @return Возвращает вопрос из карточки
   */
   const std::wstring GetQuestion();
 
   /*!
   * @brief Получает ответ
-  * 
   * @return Возвращает ответ из карточки
   */
   const std::wstring GetAnswer();
@@ -117,7 +130,6 @@ public:
   * 
   * @param user_ans Ответ пользователя
   * @param card_ans Ожидаемый ответ из карточки
-  * 
   * @return Возвращает True, если ответ пользователя верный, 
   * в противном случае False
   */
@@ -129,6 +141,20 @@ public:
   * @param new_name Новое название колоды
   */
   const void RenameCurrentDeck(const std::string& deck_id, std::wstring& new_name);
+
+  /*!
+  * @brief Добавляет карточку в колоду
+  * @param card_id Идентификатор карточки
+  * @param deck_id Идентификатор колоды
+  */
+  const void AddToDeck(const int& card_id, std::string& deck_id);
+  
+  /*!
+  * @brief Добавляет карточку в колоду
+  * @param card_id Идентификатор карточки
+  * @param deck_id Идентификатор колоды
+  */
+  const void RemoveFromDeck(const int& card_id, std::string& deck_id);
 
   /// @private
   void EraseCurrentCard();

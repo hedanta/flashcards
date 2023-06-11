@@ -12,7 +12,7 @@ QuizManager::QuizManager() = default;
 QuizManager::QuizManager(std::string& deck_id)
 : cards{}
 , deck_id_{ deck_id }
-, study_deck_{ cards.GetDeck(deck_id_) }
+, study_deck_{ cards.GetShuffledDeck(deck_id_) }
 , current_card_{}
 {};
 
@@ -48,6 +48,15 @@ const Flashcard QuizManager::GetCard() {
   return card;
 }
 
+const CardsWithId QuizManager::GetCardsList() {
+  std::string deck_id = "0";
+  return cards.GetCardsList(deck_id);
+}
+
+const CardsWithId QuizManager::GetCurrentCardsList() {
+  return cards.GetCardsList(deck_id_);
+}
+
 const int QuizManager::GetCurrentDeckSize() {
   return study_deck_.size(); 
 }
@@ -62,11 +71,19 @@ const std::wstring QuizManager::GetAnswer() {
 
 void QuizManager::SetCurrentDeck(std::string& deck_id) {
   deck_id_ = deck_id;
-  study_deck_ = cards.GetDeck(deck_id_);
+  study_deck_ = cards.GetShuffledDeck(deck_id_);
 }
 
 const void QuizManager::RenameCurrentDeck(const std::string& deck_id, std::wstring& new_name) {
   cards.RenameDeck(deck_id, new_name);
+}
+
+const void QuizManager::AddToDeck(const int& card_id, std::string& deck_id) {
+  cards.AddToDeck(card_id, deck_id);
+}
+
+const void QuizManager::RemoveFromDeck(const int& card_id, std::string& deck_id) {
+  cards.RemoveFromDeck(card_id, deck_id);
 }
 
 const bool QuizManager::CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans) {

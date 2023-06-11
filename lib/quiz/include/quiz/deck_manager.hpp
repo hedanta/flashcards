@@ -3,6 +3,7 @@
 using json = nlohmann::ordered_json;
 using CardsContainer = std::vector<std::pair<std::wstring, std::wstring>>;
 using DeckContainer = std::vector<std::pair<std::string, std::wstring>>;
+using CardsWithId = std::vector<std::pair<int, std::wstring>>;
 
 /*! 
 * @brief Класс управления карточками
@@ -27,9 +28,7 @@ public:
 
   /*!
   * @brief Читает данные из JSON-файла
-  * 
   * @return Десериализованный JSON объект
-  * 
   * @throw std::ifstream::failure В случае возникновения
   * ошибки открытия/чтения файла
   */
@@ -51,29 +50,47 @@ public:
 
   /*! 
   * @brief Создаёт колоду с данным названием
+  * 
   * @param deck_name Название новой колоды
   */
   const void CreateDeck(std::wstring& deck_name);
 
   /*!
   * @brief Получает название колоды
+  * 
   * @param deck_id Идентификатор колоды
-  * @return Название колоды, соответствующее данному идентификатору
+  * 
+  * @return Возвращает название колоды, соответствующее данному идентификатору
   */
   const std::wstring GetNameFromId(std::string& deck_id);
 
   /*!
   * @brief Получает все имеющиеся колоды
-  * @return Массив пар из всех колод и их идентификаторов
+  * 
+  * @return Возваращает массив пар из всех колод и их идентификаторов
   */
   const DeckContainer GetAllDecks();
 
   /*!
   * @brief Получает карточки из колоды
+  * 
   * @param deck_id Идентификатор колоды
-  * @return Массив пар карточек вида "вопрос - ответ" из данной колоды
+  * 
+  * @return Возвращает массив пар карточек вида 
+  * "вопрос - ответ" из данной колоды
   */
-  const CardsContainer GetDeck(std::string& deck_id);
+  const CardsContainer GetShuffledDeck(std::string& deck_id);
+
+  /*!
+  * @brief Получает список карточек
+  * 
+  * @param deck_id Идентификатор колоды
+  * 
+  * @return Возвращает массив пар вида
+  * "Идентификатор карточки - вопрос" из
+  * данной колоды
+  */
+  const CardsWithId GetCardsList(std::string& deck_id);
 
   /*!
   * @brief Получает название колоды
