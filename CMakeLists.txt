@@ -18,7 +18,7 @@ find_package(wxWidgets CONFIG REQUIRED)
 
 add_executable(cards WIN32
 		main_app.cpp
-main_app.h
+    main_app.hpp
     main.manifest)
 
 add_subdirectory(lib)

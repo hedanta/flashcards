@@ -28,12 +28,12 @@ private:
 public:
 
   /*!
-  * Конструктор по умолчанию
+  * @brief Конструктор по умолчанию
   */
   QuizManager(); 
 
   /*!
-  * @brief Конструктор по идентифицатору колоды
+  * @brief Конструктор по идентификатору колоды
   * 
   * Создаёт экземпляр класса, в котором данная
   * колода является текущей
@@ -43,7 +43,7 @@ public:
   QuizManager(std::string& deck_id);
 
   /*!
-  * Деструктор по умолчанию
+  * @brief Деструктор по умолчанию
   */
   ~QuizManager();
   
@@ -59,39 +59,39 @@ public:
 
   /*!
   * @brief Получает размер колоды
-  * @return Возвращает размер текущей колоды
+  * @return Размер текущей колоды
   */
   const int GetCurrentDeckSize();
 
   /*!
   * @brief Получает все имеющиеся колоды
-  * @return Возваращает массив пар из всех колод и их идентификаторов
+  * @return Массив пар из всех колод и их идентификаторов
   */
   const DeckContainer LoadAllDecks();
 
   /*!
   * @brief Получает идентификатор колоды
-  * @return Возвращает идентификатор текущей колоды
+  * @return Идентификатор текущей колоды
   */
   const std::string GetCurrentDeckId();
 
   /*!
   * @brief Получает название колоды
   * @param deck_id Идентификатор колоды
-  * @return Возвращает название колоды,
+  * @return Название колоды,
   * соответствующей данному идентификатору
   */
   const std::wstring GetDeckNameFromId(std::string& deck_id);
 
   /*!
   * @brief Получает название колоды
-  * @return Возвращает название текущей колоды
+  * @return Название текущей колоды
   */
   const std::wstring GetCurrentDeckName();
 
   /*!
   * @brief Получает все карточки из колоды
-  * @return Возвращает все имеющиеся
+  * @return Все имеющиеся
   * карточки
   */
   const CardsWithId GetCardsList();
@@ -99,7 +99,7 @@ public:
   /*!
   * @brief Получает список карточек
   * @param deck_id Идентификатор колоды
-  * @return Возвращает массив пар вида
+  * @return Массив пар вида
   * "Идентификатор карточки - вопрос" из
   * текущей колоды
   */
@@ -107,19 +107,19 @@ public:
 
   /*!
   * @brief Получает карточку
-  * @return Возвращает пару "вопрос - ответ"
+  * @return Пару "вопрос - ответ"
   */
   const Flashcard GetCard();
 
   /*!
   * @brief Получает вопрос
-  * @return Возвращает вопрос из карточки
+  * @return Вопрос из карточки
   */
   const std::wstring GetQuestion();
 
   /*!
   * @brief Получает ответ
-  * @return Возвращает ответ из карточки
+  * @return Ответ из карточки
   */
   const std::wstring GetAnswer();
   
@@ -130,7 +130,7 @@ public:
   * 
   * @param user_ans Ответ пользователя
   * @param card_ans Ожидаемый ответ из карточки
-  * @return Возвращает True, если ответ пользователя верный, 
+  * @return True, если ответ пользователя верный, 
   * в противном случае False
   */
   const bool CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans);

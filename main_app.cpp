@@ -1,4 +1,4 @@
-﻿#include "main_app.h"
+﻿#include "main_app.hpp"
 
 #include <wx/wx.h>
 
@@ -247,9 +247,12 @@ void MyFrame::RenameDeck(wxCommandEvent&) {
 
   rename.ShowModal();
 
-  wxString new_name = rename.GetValue();
+  rename.SetValue("");
+
+  new_name = rename.GetValue();
 
   std::wstring w_new_name = new_name.ToStdWstring();
+
   
   if (new_name != "") {
     msg = "Название изменено на " + new_name;

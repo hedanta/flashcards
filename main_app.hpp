@@ -3,8 +3,9 @@
 #include <wx/wx.h>
 
 /*!
-* @brief Основное приложение,
-* инициализирующее графический интерфейс
+* @brief Класс основного приложения,
+* позволяющего создать графический
+* интерфейс
 */
 class MyApp : public wxApp {
 public:
@@ -12,7 +13,8 @@ public:
 };
 
 /*!
-* @brief Класс, позволяющий создать
+* @brief Класс окна верхнего уровня,
+* которое инициализирует основной 
 * графический интерфейс
 */
 class MyFrame : public wxFrame {
@@ -44,6 +46,8 @@ private:
 
   wxTextCtrl* question_text;
   wxTextCtrl* answer_text;
+
+  wxString new_name;
 
   wxTextEntryDialog rename;
 
