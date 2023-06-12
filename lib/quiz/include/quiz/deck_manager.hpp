@@ -3,6 +3,7 @@
 using json = nlohmann::ordered_json;
 using CardsContainer = std::vector<std::pair<std::wstring, std::wstring>>;
 using DeckContainer = std::vector<std::pair<std::string, std::wstring>>;
+using CardsWithId = std::vector<std::pair<int, std::wstring>>;
 
 /*! 
 * @brief Класс управления карточками
@@ -16,29 +17,26 @@ private:
 
 public:
   /*!
-  * Конструктор по умолчанию
+  * @brief Конструктор по умолчанию
   */
   DeckManager();
 
   /*!
-  * Деструктор по умолчанию
+  * @brief Деструктор по умолчанию
   */
   ~DeckManager();
 
   /*!
   * @brief Читает данные из JSON-файла
-  * 
   * @return Десериализованный JSON объект
-  * 
-  * @throw std::ifstream::failure В случае возникновения
+  * @throw std::ifstream::badbit В случае возникновения
   * ошибки открытия/чтения файла
   */
   const json ReadFromCardsFile();
 
   /*!
   * @brief Записывает данные в JSON-файл
-  * 
-  * @throw std::ifstream::failure В случае возникновения
+  * @throw std::ofstream::badbit В случае возникновения
   * ошибки открытия/записи в файл
   */
   const void WriteToCardsFile(json& data);
@@ -71,14 +69,24 @@ public:
   /*!
   * @brief Получает карточки из колоды
   * @param deck_id Идентификатор колоды
-  * @return Массив пар карточек вида "вопрос - ответ" из данной колоды
+  * @return Массив пар карточек вида 
+  * "вопрос - ответ" из данной колоды
   */
-  const CardsContainer GetDeck(std::string& deck_id);
+  const CardsContainer GetShuffledDeck(std::string& deck_id);
+
+  /*!
+  * @brief Получает список карточек
+  * @param deck_id Идентификатор колоды
+  * @return Массив пар вида
+  * "идентификатор карточки - вопрос" из
+  * данной колоды
+  */
+  const CardsWithId GetCardsList(std::string& deck_id);
 
   /*!
   * @brief Получает название колоды
   * @param deck_id Идентификатор колоды
-  * @return Возвращает название колоды, соответствующей
+  * @return Название колоды, соответствующей
   * данному идентификатору
   */
   const std::wstring GetDeckNameFromId(std::string& deck_id);

@@ -1,4 +1,4 @@
-#include <quiz/quiz_manager.hpp>
+п»ї#include "main_app.hpp"
 
 #include <wx/wx.h>
 
@@ -24,77 +24,11 @@ namespace {
   }
 }
 
-/*!
-* @brief Основное приложение,
-* инициализирующее графический интерфейс
-*/
-class MyApp : public wxApp {
-public:
-  virtual bool OnInit();
-};
-
-/*!
-* @brief Класс, позволяющий создать
-* графический интерфейс
-*/
-class MyFrame : public wxFrame {
-public:
-  MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
-
-private:
-  void SetupMenu();
-  void BuildUI();
-
-  void RefsreshCard();
-
-  void OnUpdateOk(wxUpdateUIEvent&);
-
-  void OnClickQuest(wxCommandEvent&);
-  void OnClickCheck(wxCommandEvent&);
-  void OnClickAns(wxCommandEvent&);
-  bool DeckEnded();
-
-  void RenameDeck(wxCommandEvent&);
-  void SelectDeck(wxCommandEvent&);
-  void EditDeck(wxCommandEvent&);
-
-  wxStaticText* question;
-  wxStaticText* answer;
-  wxStaticText* checker;
-
-  wxTextCtrl* question_text;
-  wxTextCtrl* answer_text;
-  wxString new_name;
-
-  QuizManager cards;
-
-  std::vector<std::pair<std::string, int>> deck_menu_id;
-
-  bool first_click = true;
-  bool checked = false;
-  bool show = false;
-
-  wxDECLARE_EVENT_TABLE();
-};
-
-enum ButtonId {
-  quest_id = wxID_LAST + 2,
-  check_id = wxID_LAST,
-  ans_id
-};
-
-wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
-EVT_BUTTON(quest_id, MyFrame::OnClickQuest)
-EVT_BUTTON(check_id, MyFrame::OnClickCheck)
-EVT_BUTTON(ans_id, MyFrame::OnClickAns)
-EVT_UPDATE_UI(wxID_OK, MyFrame::OnUpdateOk)
-wxEND_EVENT_TABLE()
-
 wxIMPLEMENT_APP(MyApp);
 
 
 bool MyApp::OnInit() {
-  MyFrame* frame = new MyFrame("Карточки", wxDefaultPosition, wxDefaultSize);
+  MyFrame* frame = new MyFrame("РљР°СЂС‚РѕС‡РєРё", wxDefaultPosition, wxDefaultSize);
   frame->Show(true);
   return true;
 }
@@ -128,14 +62,17 @@ void MyFrame::SetupMenu() {
 
   wxMenu* options_menu = new wxMenu();
 
-  options_menu->AppendSubMenu(deck_submenu, "&Текущая колода");
-  menu_bar->Append(options_menu, "&Опции");
+  options_menu->AppendSubMenu(deck_submenu, "&РўРµРєСѓС‰Р°СЏ РєРѕР»РѕРґР°");
+  menu_bar->Append(options_menu, "&РћРїС†РёРё");
 
-  int id_rename = options_menu->Append(wxID_ANY, "&Сменить имя колоды\tCtrl+R")->GetId();
+  int id_rename = options_menu->Append(wxID_ANY, "&РџРµСЂРµРёРјРµРЅРѕРІР°С‚СЊ РєРѕР»РѕРґСѓ\tCtrl+R")->GetId();
   this->Bind(wxEVT_MENU, &MyFrame::RenameDeck, this, id_rename);
 
-  /*int id_cards = options_menu->Append(wxID_ANY, "Редактор колоды&\tCtrl+E")->GetId();
-  this->Bind(wxEVT_MENU, &MyFrame::EditDeck, this, id_cards);*/
+  int id_cards = options_menu->Append(wxID_ANY, "Р РµРґР°РєС‚РѕСЂ РєРѕР»РѕРґС‹&\tCtrl+E")->GetId();
+  this->Bind(wxEVT_MENU, &MyFrame::EditDeck, this, id_cards);
+
+  int id_create = options_menu->Append(wxID_ANY, "РЎРѕР·РґР°С‚СЊ РєРѕР»РѕРґСѓ&\tCtrl+N")->GetId();
+  this->Bind(wxEVT_MENU, &MyFrame::CreateDeck, this, id_create);
 
   SetMenuBar(menu_bar);
 }
@@ -154,24 +91,24 @@ void MyFrame::BuildUI() {
   auto title_font = wxFont(wxNORMAL_FONT->GetPointSize() * 1.5, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
   auto text_font = wxFont(wxNORMAL_FONT->GetPointSize() + 1, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL);
 
-  question = new wxStaticText(card_panel, wxID_ANY, "Вопрос:");
+  question = new wxStaticText(card_panel, wxID_ANY, "Р’РѕРїСЂРѕСЃ:");
   question->SetFont(title_font);
 
   question_text = new wxTextCtrl(card_panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-  question_text->SetValue("Вопрос появится здесь");
+  question_text->SetValue("Р’РѕРїСЂРѕСЃ РїРѕСЏРІРёС‚СЃСЏ Р·РґРµСЃСЊ");
 
-  answer = new wxStaticText(card_panel, wxID_ANY, "Ваш ответ:");
+  answer = new wxStaticText(card_panel, wxID_ANY, "Р’Р°С€ РѕС‚РІРµС‚:");
   answer->SetFont(title_font);
 
   answer_text = new wxTextCtrl(card_panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
-  answer_text->SetHint(" Напишите ответ...");
+  answer_text->SetHint(" РќР°РїРёС€РёС‚Рµ РѕС‚РІРµС‚...");
 
   checker = new wxStaticText(card_panel, wxID_ANY, "       ");
   checker->SetFont(text_font);
 
-  auto quest_button = new wxButton(card_panel, quest_id, "Случайный вопрос");
-  auto check_button = new wxButton(card_panel, check_id, "Проверить ответ");
-  auto ans_button = new wxButton(card_panel, ans_id, "Показать правильный ответ");
+  auto quest_button = new wxButton(card_panel, quest_id, "РЎР»СѓС‡Р°Р№РЅС‹Р№ РІРѕРїСЂРѕСЃ");
+  auto check_button = new wxButton(card_panel, check_id, "РџСЂРѕРІРµСЂРёС‚СЊ РѕС‚РІРµС‚");
+  auto ans_button = new wxButton(card_panel, ans_id, "РџРѕРєР°Р·Р°С‚СЊ РїСЂР°РІРёР»СЊРЅС‹Р№ РѕС‚РІРµС‚");
 
   wxFlexGridSizer* card_sizer = new wxFlexGridSizer(2, 10, 10);
   card_sizer->AddGrowableCol(1);
@@ -210,7 +147,7 @@ void MyFrame::OnClickQuest(wxCommandEvent&) {
       cards.EraseCurrentCard();
 
       answer_text->SetValue("");
-      answer_text->SetHint(" Напишите ответ...");
+      answer_text->SetHint(" РќР°РїРёС€РёС‚Рµ РѕС‚РІРµС‚...");
 
       this->question_text->SetValue(cards.GetQuestion());
     }
@@ -222,18 +159,18 @@ void MyFrame::OnClickQuest(wxCommandEvent&) {
       Trim(user_ans);
 
       if (user_ans == "") {
-        wxMessageBox("Вы не написали ответ!", "Сообщение", wxOK);
+        wxMessageBox("Р’С‹ РЅРµ РЅР°РїРёСЃР°Р»Рё РѕС‚РІРµС‚!", "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK);
       }
 
       else {
-        wxMessageBox("Вы не проверили Ваш ответ!", "Сообщение", wxOK);
+        wxMessageBox("Р’С‹ РЅРµ РїСЂРѕРІРµСЂРёР»Рё Р’Р°С€ РѕС‚РІРµС‚!", "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK);
       }
     }
   }
 
   else {
     answer_text->SetValue("");
-    answer_text->SetHint(" Напишите ответ...");
+    answer_text->SetHint(" РќР°РїРёС€РёС‚Рµ РѕС‚РІРµС‚...");
 
     this->question_text->SetValue(cards.GetQuestion());
 
@@ -254,10 +191,10 @@ void MyFrame::OnClickCheck(wxCommandEvent&) {
     Trim(user_ans);
 
     if (user_ans == "") {
-      wxMessageBox("Вы не написали ответ!", "Сообщение", wxOK);
+      wxMessageBox("Р’С‹ РЅРµ РЅР°РїРёСЃР°Р»Рё РѕС‚РІРµС‚!", "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK);
     }
     else if (cards.CheckUserAnswer(user_ans, expected_ans)) {
-      this->checker->SetLabel("Верно");
+      this->checker->SetLabel("Р’РµСЂРЅРѕ");
       checked = true;
 
       if (cards.GetCurrentDeckSize() - 1 == 0) {
@@ -265,13 +202,13 @@ void MyFrame::OnClickCheck(wxCommandEvent&) {
       }
     }
     else {
-      this->checker->SetLabel("Неверно");
+      this->checker->SetLabel("РќРµРІРµСЂРЅРѕ");
       checked = true;
     }
   }
   
   else {
-    wxMessageBox("Вы не получили вопрос!", "Сообщение", wxOK);
+    wxMessageBox("Р’С‹ РЅРµ РїРѕР»СѓС‡РёР»Рё РІРѕРїСЂРѕСЃ!", "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK);
   }
 }
 
@@ -288,15 +225,15 @@ void MyFrame::OnClickAns(wxCommandEvent&) {
     return;
   }
 
-  wxMessageBox("Вы не получили вопрос!", "Сообщение", wxOK);
+  wxMessageBox("Р’С‹ РЅРµ РїРѕР»СѓС‡РёР»Рё РІРѕРїСЂРѕСЃ!", "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK);
   answer_text->SetValue("");
-  answer_text->SetHint(" Напишите ответ...");
+  answer_text->SetHint(" РќР°РїРёС€РёС‚Рµ РѕС‚РІРµС‚...");
 }
 
 bool MyFrame::DeckEnded() {
   if (cards.GetCurrentDeckSize() == 0) {
     RefsreshCard();
-    wxMessageBox("Текущая колода пуста", "Сообщение", wxOK);
+    wxMessageBox("РўРµРєСѓС‰Р°СЏ РєРѕР»РѕРґР° РїСѓСЃС‚Р°", "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK);
 
     return true;
   }
@@ -306,28 +243,31 @@ bool MyFrame::DeckEnded() {
 
 void MyFrame::RenameDeck(wxCommandEvent&) {
   std::wstring current_name = cards.GetCurrentDeckName();
-  wxString msg = "Введите новое название для колоды " + current_name;
+  wxString msg = "Р’РІРµРґРёС‚Рµ РЅРѕРІРѕРµ РЅР°Р·РІР°РЅРёРµ РґР»СЏ РєРѕР»РѕРґС‹ " + current_name;
 
-  wxTextEntryDialog rename(this, msg, "Смена названия", "", wxOK);
+  rename.Create(this, msg, "РЎРјРµРЅР° РЅР°Р·РІР°РЅРёСЏ", "", wxOK);
+  rename.SetValue("");
+
   rename.ShowModal();
 
   new_name = rename.GetValue();
 
   std::wstring w_new_name = new_name.ToStdWstring();
+
   
   if (new_name != "") {
-    msg = "Название изменено на " + new_name;
+    msg = "РќР°Р·РІР°РЅРёРµ РёР·РјРµРЅРµРЅРѕ РЅР° " + new_name;
 
     if (w_new_name == current_name) {
-      wxMessageBox("Вы ввели текущее название!", "Внимание", wxOK | wxICON_WARNING);
+      wxMessageBox("Р’С‹ РІРІРµР»Рё С‚РµРєСѓС‰РµРµ РЅР°Р·РІР°РЅРёРµ!", "Р’РЅРёРјР°РЅРёРµ", wxOK | wxICON_WARNING);
     }
-    else if (wxMessageBox(msg, "Сообщение", wxOK | wxCANCEL) == wxOK) {
+    else if (wxMessageBox(msg, "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK | wxCANCEL) == wxOK) {
 
       cards.RenameCurrentDeck(cards.GetCurrentDeckId(), w_new_name);
       SetupMenu();
     }
     else {
-      wxMessageBox("Смена названия отменена", "Сообщение", wxOK);
+      wxMessageBox("РЎРјРµРЅР° РЅР°Р·РІР°РЅРёСЏ РѕС‚РјРµРЅРµРЅР°", "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK);
     }
   }
 }
@@ -345,9 +285,9 @@ void MyFrame::SelectDeck(wxCommandEvent& e) {
       selected_id = it.first;
       selected = cards.GetDeckNameFromId(selected_id);
 
-      wxString msg = "Выбрана колода ";
+      wxString msg = "Р’С‹Р±СЂР°РЅР° РєРѕР»РѕРґР° ";
       msg += selected;
-      wxMessageBox(msg, "Сообщение", wxOK);
+      wxMessageBox(msg, "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK);
 
       break;
     }
@@ -360,12 +300,86 @@ void MyFrame::RefsreshCard() {
   first_click = true;
   checked = false;
   show = false;
-  this->question_text->SetValue("Вопрос появится здесь");
+  this->question_text->SetValue("Р’РѕРїСЂРѕСЃ РїРѕСЏРІРёС‚СЃСЏ Р·РґРµСЃСЊ");
   this->answer_text->SetValue("");
-  this->answer_text->SetHint("Напишите ответ...");
+  this->answer_text->SetHint("РќР°РїРёС€РёС‚Рµ РѕС‚РІРµС‚...");
   this->checker->SetLabel("");
+}
+
+void MyFrame::OnSelectCard(wxCommandEvent& event) {
+  int card_id = event.GetInt();
+  std::string deck_id = cards.GetCurrentDeckId();
+  wxString card;
+  card << card_id;
+
+  if (select_cards->IsChecked(card_id) == false) {
+    cards.RemoveFromDeck(card_id, deck_id);
+  }
+
+  else {
+    cards.AddToDeck(card_id, deck_id);
+  }
+
+  cards.SetCurrentDeck(deck_id);
+}
+
+void MyFrame::EditDeck(wxCommandEvent&) {
+  wxDialog* select_dlg = new wxDialog(this, wxID_ANY, "Р’С‹Р±РµСЂРёС‚Рµ РєР°СЂС‚РѕС‡РєРё", wxDefaultPosition, wxSize(330, 300));
+
+  select_cards = new wxCheckListBox(select_dlg, wxID_ANY, wxDefaultPosition, wxSize(300, 200), 0, NULL, wxLB_ALWAYS_SB);
+
+  int idx = 0;
+
+  for (auto it : cards.GetCardsList()) {
+    select_cards->Append(it.second);
+    for (auto cur_it : cards.GetCurrentCardsList()) {
+      if (it == cur_it) {
+        select_cards->Check(idx);
+        break;
+      }
+    }
+    select_cards->Bind(wxEVT_CHECKLISTBOX, &MyFrame::OnSelectCard, this);
+    idx += 1;
+  }
+
+  auto ok_sizer = select_dlg->CreateButtonSizer(wxOK);
+  auto ok = new wxButton(select_dlg, wxID_OK);
+  ok_sizer->Add(ok, 1, wxALIGN_BOTTOM | wxRIGHT | wxBOTTOM, 10);
+  select_dlg->SetSizer(ok_sizer);
+  select_dlg->ShowModal();
+}
+
+void MyFrame::CreateDeck(wxCommandEvent&) {
+  wxString msg = "Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ РґР»СЏ РЅРѕРІРѕР№ РєРѕР»РѕРґС‹";
+
+  wxTextEntryDialog creator(this, msg, "РЎРѕР·РґР°РЅРёРµ РєРѕР»РѕРґС‹", "", wxOK);
+  creator.SetValue("");
+
+  creator.ShowModal();
+
+  new_name = creator.GetValue();
+
+  if (new_name != "") {
+    msg = "РЎРѕР·РґР°РЅР° РєРѕР»РѕРґР° " + new_name;
+
+    if (wxMessageBox(msg, "РЎРѕРѕР±С‰РµРЅРёРµ", wxOK | wxCANCEL) == wxCANCEL) {
+      msg = "РЎРѕР·РґР°РЅРёРµ РєРѕР»РѕРґС‹ РѕС‚РјРµРЅРµРЅРѕ";
+      wxMessageBox(msg, "РЎРѕРѕР±С‰РµРЅРёРµ");
+    }
+
+    else {
+      std::wstring w_new_name = new_name.ToStdWstring();
+      cards.CreateDeck(w_new_name);
+
+      SetupMenu();
+    }
+  }
 }
 
 void MyFrame::OnUpdateOk(wxUpdateUIEvent& event) {
   event.Enable(false);
+
+  if (!rename.GetValue().IsEmpty()) {
+    event.Enable(true);
+  }
 }
