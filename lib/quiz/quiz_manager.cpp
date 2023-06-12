@@ -4,9 +4,6 @@
 #include <iostream>
 #include <fstream>
 
-using Flashcard = std::pair<std::wstring, std::wstring>;
-using CardsContainer = std::vector<Flashcard>;
-
 QuizManager::QuizManager() = default;
 
 QuizManager::QuizManager(std::string& deck_id)
@@ -88,4 +85,8 @@ const void QuizManager::RemoveFromDeck(const int& card_id, std::string& deck_id)
 
 const bool QuizManager::CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans) {
   return user_ans == card_ans;
+}
+
+const void QuizManager::CreateDeck(std::wstring& deck_name) {
+  cards.CreateDeck(deck_name);
 }

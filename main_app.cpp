@@ -71,6 +71,9 @@ void MyFrame::SetupMenu() {
   int id_cards = options_menu->Append(wxID_ANY, "Редактор колоды&\tCtrl+E")->GetId();
   this->Bind(wxEVT_MENU, &MyFrame::EditDeck, this, id_cards);
 
+  int id_create = options_menu->Append(wxID_ANY, "Создать колоду&\tCtrl+N")->GetId();
+  this->Bind(wxEVT_MENU, &MyFrame::CreateDeck, this, id_create);
+
   SetMenuBar(menu_bar);
 }
 
@@ -242,12 +245,10 @@ void MyFrame::RenameDeck(wxCommandEvent&) {
   std::wstring current_name = cards.GetCurrentDeckName();
   wxString msg = "Введите новое название для колоды " + current_name;
 
-  // TODO: ПЕРЕПИСАТЬ НАФИГ эту кривую херню
   rename.Create(this, msg, "Смена названия", "", wxOK);
+  rename.SetValue("");
 
   rename.ShowModal();
-
-  rename.SetValue("");
 
   new_name = rename.GetValue();
 
@@ -346,6 +347,33 @@ void MyFrame::EditDeck(wxCommandEvent&) {
   ok_sizer->Add(ok, 1, wxALIGN_BOTTOM | wxRIGHT | wxBOTTOM, 10);
   select_dlg->SetSizer(ok_sizer);
   select_dlg->ShowModal();
+}
+
+void MyFrame::CreateDeck(wxCommandEvent&) {
+  wxString msg = "Введите название для новой колоды";
+
+  wxTextEntryDialog creator(this, msg, "Создание колоды", "", wxOK);
+  creator.SetValue("");
+
+  creator.ShowModal();
+
+  new_name = creator.GetValue();
+
+  if (new_name != "") {
+    msg = "Создана колода " + new_name;
+
+    if (wxMessageBox(msg, "Сообщение", wxOK | wxCANCEL) == wxCANCEL) {
+      msg = "Создание колоды отменено";
+      wxMessageBox(msg, "Сообщение");
+    }
+
+    else {
+      std::wstring w_new_name = new_name.ToStdWstring();
+      cards.CreateDeck(w_new_name);
+
+      SetupMenu();
+    }
+  }
 }
 
 void MyFrame::OnUpdateOk(wxUpdateUIEvent& event) {

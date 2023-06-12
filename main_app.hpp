@@ -38,6 +38,7 @@ private:
   void RenameDeck(wxCommandEvent&);
   void SelectDeck(wxCommandEvent&);
   void EditDeck(wxCommandEvent&);
+  void CreateDeck(wxCommandEvent&);
 
 
   wxStaticText* question;

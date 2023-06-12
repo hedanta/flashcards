@@ -4,7 +4,6 @@
 #include <random>
 
 using Flashcard = std::pair<std::wstring, std::wstring>;
-using CardsContainer = std::vector<Flashcard>;
 
 namespace {
   std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> Converter;
@@ -155,6 +154,15 @@ public:
   * @param deck_id Идентификатор колоды
   */
   const void RemoveFromDeck(const int& card_id, std::string& deck_id);
+
+  /*!
+  * @brief Создаёт колоду
+  * 
+  * Создаёт колоду с данным названием
+  * 
+  * @param deck_name Название колоды
+  */
+  const void CreateDeck(std::wstring& deck_name);
 
   /// @private
   void EraseCurrentCard();

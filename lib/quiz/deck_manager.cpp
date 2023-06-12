@@ -6,10 +6,6 @@
 #include <fstream>
 #include <random>
 
-using json = nlohmann::ordered_json;
-using CardsContainer = std::vector<std::pair<std::wstring, std::wstring>>;
-using DeckContainer = std::vector<std::pair<std::string, std::wstring>>;
-
 namespace {
   std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> Converter;
 }
@@ -220,11 +216,13 @@ const void DeckManager::RemoveFromDeck(const int& card_id, std::string& deck_id)
   int deck_count = data["cards"][card_id]["deck"].size();
 
   // ищем индекс колоды, чтобы стереть её
-  for (auto it : data["cards"][card_id]["deck"]) {
-    if (it == deck_id) {
+  for (auto it = data["cards"][card_id]["deck"].begin(); it != data["cards"][card_id]["deck"].end();) {
+    if (*it == deck_id) {
       it = data["cards"][card_id]["deck"].erase(it);
       break;
     }
+
+    it += 1;
   }
 
   WriteToCardsFile(data);
