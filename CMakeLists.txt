@@ -39,6 +39,6 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/
         FILES_MATCHING 
         PATTERN "*.dll")
 
-#file(GLOB RESOURCES "cards.json")
-#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cards.json
-#   ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+file(GLOB RESOURCES "cards.json")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cards.json
+   ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
