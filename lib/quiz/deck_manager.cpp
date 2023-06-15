@@ -101,9 +101,11 @@ const std::wstring DeckManager::GetNameFromId(std::string& deck_id) {
   for (auto& it : data["decks"].items()) {
     if (deck_id == it.key()) {
       deck_name = Converter.from_bytes(it.value());
-      return deck_name;
+      break;
     }
   }
+
+  return deck_name;
 }
 
 const CardsContainer DeckManager::GetShuffledDeck(std::string& deck_id) {

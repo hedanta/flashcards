@@ -1,6 +1,7 @@
 ﻿#include "main_app.hpp"
 
 #include <wx/wx.h>
+#include <wx/uilocale.h>
 
 namespace {
   // trim from start (in place)
@@ -28,6 +29,9 @@ wxIMPLEMENT_APP(MyApp);
 
 
 bool MyApp::OnInit() {
+  long ru_lang = wxLANGUAGE_RUSSIAN;
+  wxLocale* locale = new wxLocale(ru_lang);
+
   MyFrame* frame = new MyFrame("Карточки", wxDefaultPosition, wxDefaultSize);
   frame->Show(true);
   return true;
@@ -36,8 +40,6 @@ bool MyApp::OnInit() {
 MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   : wxFrame(NULL, wxID_ANY, title, pos, size)
 {
-  long ru_lang = wxLANGUAGE_RUSSIAN;
-  wxLocale* locale = new wxLocale(ru_lang);
   SetupMenu();
   BuildUI();
 }
