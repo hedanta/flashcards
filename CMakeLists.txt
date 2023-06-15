@@ -29,16 +29,16 @@ install(FILES cards.json DESTINATION bin)
 
 install(TARGETS cards DESTINATION bin)
 
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/ 
-        DESTINATION bin/
-        FILES_MATCHING 
-        PATTERN "*.dll")
-
 add_custom_target(install_${PROJECT_NAME}
         ${CMAKE_COMMAND} -DCMAKE_INSTALL_CONFIG_NAME=${CMAKE_BUILD_TYPE}
         -P cmake_install.cmake
         )
 
-file(GLOB RESOURCES "cards.json")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cards.json
-   ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/ 
+        DESTINATION bin/
+        FILES_MATCHING 
+        PATTERN "*.dll")
+
+#file(GLOB RESOURCES "cards.json")
+#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cards.json
+#   ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
