@@ -61,6 +61,7 @@ private:
   bool first_click = true;
   bool checked = false;
   bool show = false;
+  bool deck_has_cards = true;
 
   wxDECLARE_EVENT_TABLE();
 };

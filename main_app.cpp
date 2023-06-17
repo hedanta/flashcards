@@ -233,9 +233,18 @@ void MyFrame::OnClickAns(wxCommandEvent&) {
 }
 
 bool MyFrame::DeckEnded() {
+  if (!deck_has_cards) {
+    wxMessageBox("Текущая колода пуста.\nДобавьте карточки с помощью редактора колод.", "Сообщение", wxOK);
+    return true;
+  }
+
   if (cards.GetCurrentDeckSize() == 0) {
     RefsreshCard();
-    wxMessageBox("Текущая колода пуста", "Сообщение", wxOK);
+    if (wxMessageBox("Вы изучили все карточки из колоды.\nНачать сначала?", "Сообщение",
+      wxOK | wxCANCEL == wxOK)) {
+      std::string deck_id = cards.GetCurrentDeckId();
+      cards.SetCurrentDeck(deck_id);
+    }
 
     return true;
   }
@@ -296,6 +305,14 @@ void MyFrame::SelectDeck(wxCommandEvent& e) {
   }
 
   cards.SetCurrentDeck(selected_id);
+
+  if (cards.GetCurrentDeckSize() == 0) {
+    deck_has_cards = false;
+  }
+  
+  else {
+    deck_has_cards = true;
+  }
 }
 
 void MyFrame::RefsreshCard() {
@@ -323,6 +340,14 @@ void MyFrame::OnSelectCard(wxCommandEvent& event) {
   }
 
   cards.SetCurrentDeck(deck_id);
+
+  if (cards.GetCurrentDeckSize() == 0) {
+    deck_has_cards = false;
+  }
+
+  else {
+    deck_has_cards = true;
+  }
 }
 
 void MyFrame::EditDeck(wxCommandEvent&) {
