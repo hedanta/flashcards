@@ -156,6 +156,8 @@ void MyFrame::OnClickQuest(wxCommandEvent&) {
       answer_text->SetHint(" Напишите ответ...");
 
       this->question_text->SetValue(cards.GetQuestion());
+
+      show = false;
     }
 
     else if (!show || !checked) {
@@ -191,7 +193,7 @@ void MyFrame::OnClickCheck(wxCommandEvent&) {
     return;
   }
 
-  if (!first_click && !show) {
+  if (!first_click) {
     std::wstring user_ans = answer_text->GetValue().ToStdWstring();
     std::wstring expected_ans = cards.GetAnswer();
     Trim(user_ans);
@@ -199,6 +201,7 @@ void MyFrame::OnClickCheck(wxCommandEvent&) {
     if (user_ans == "") {
       wxMessageBox("Вы не написали ответ!", "Сообщение", wxOK);
     }
+
     else if (cards.CheckUserAnswer(user_ans, expected_ans)) {
       this->checker->SetLabel("Верно");
       checked = true;
@@ -207,6 +210,7 @@ void MyFrame::OnClickCheck(wxCommandEvent&) {
         cards.EraseCurrentCard();
       }
     }
+
     else {
       this->checker->SetLabel("Неверно");
       checked = true;
@@ -224,9 +228,10 @@ void MyFrame::OnClickAns(wxCommandEvent&) {
   }
   
   if (!first_click) {
-    show = true;
-    this->answer_text->SetValue(this->cards.GetAnswer());
-    cards.EraseCurrentCard();
+    if (!show) {
+      show = true;  
+      this->answer_text->SetValue(this->cards.GetAnswer());
+    }
 
     return;
   }
