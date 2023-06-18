@@ -5,11 +5,6 @@
 
 using Flashcard = std::pair<std::wstring, std::wstring>;
 
-namespace {
-  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> Converter;
-}
-
-
 /*!
 * @brief Класс изучения карточек
 * 
@@ -39,7 +34,7 @@ public:
   * 
   * @param deck_id Идентификатор колоды
   */
-  QuizManager(std::string& deck_id);
+  QuizManager(const std::string& deck_id);
 
   /*!
   * @brief Деструктор по умолчанию
@@ -54,7 +49,7 @@ public:
   * 
   * @param deck_id Идентификатор колоды
   */
-  void SetCurrentDeck(std::string& deck_id);
+  void SetCurrentDeck(const std::string& deck_id);
 
   /*!
   * @brief Получает размер колоды
@@ -80,7 +75,7 @@ public:
   * @return Название колоды,
   * соответствующей данному идентификатору
   */
-  const std::wstring GetDeckNameFromId(std::string& deck_id);
+  const std::wstring GetDeckNameFromId(const std::string& deck_id);
 
   /*!
   * @brief Получает название колоды
@@ -132,28 +127,28 @@ public:
   * @return True, если ответ пользователя верный, 
   * в противном случае False
   */
-  const bool CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans);
+  const bool CheckUserAnswer(const std::wstring& user_ans, const std::wstring& card_ans);
 
   /*!
   * @brief Меняет название колоды
   * @param deck_id Идентификатор колоды
   * @param new_name Новое название колоды
   */
-  const void RenameCurrentDeck(const std::string& deck_id, std::wstring& new_name);
+  const void RenameCurrentDeck(const std::string& deck_id, const std::wstring& new_name);
 
   /*!
   * @brief Добавляет карточку в колоду
   * @param card_id Идентификатор карточки
   * @param deck_id Идентификатор колоды
   */
-  const void AddToDeck(const int& card_id, std::string& deck_id);
+  const void AddToDeck(const int& card_id, const std::string& deck_id);
   
   /*!
   * @brief Добавляет карточку в колоду
   * @param card_id Идентификатор карточки
   * @param deck_id Идентификатор колоды
   */
-  const void RemoveFromDeck(const int& card_id, std::string& deck_id);
+  const void RemoveFromDeck(const int& card_id, const std::string& deck_id);
 
   /*!
   * @brief Создаёт колоду
@@ -162,7 +157,16 @@ public:
   * 
   * @param deck_name Название колоды
   */
-  const void CreateDeck(std::wstring& deck_name);
+  const void CreateDeck(const std::wstring& deck_name);
+
+  /*!
+  * @brief Удаляет колоду
+  *
+  * Удаляет колоду с данным идентификатором
+  *
+  * @param deck_name Идентификатор колоды
+  */
+  const void DeleteDeck(const std::string& deck_id);
 
   /// @private
   void EraseCurrentCard();

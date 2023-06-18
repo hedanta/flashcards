@@ -18,7 +18,7 @@ add_executable(cards WIN32
 
 add_subdirectory(lib)
 
-target_link_libraries(cards PRIVATE wx::core wx::base quiz_manager)
+target_link_libraries(cards PRIVATE wx::core wx::base nlohmann_json::nlohmann_json quiz_manager)
 
 install(FILES cards.json DESTINATION bin)
 
@@ -29,7 +29,7 @@ add_custom_target(install_${PROJECT_NAME}
         -P cmake_install.cmake
         )
 
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/ 
+install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/<$CONFIG>/ 
         DESTINATION bin/
         FILES_MATCHING 
         PATTERN "*.dll"

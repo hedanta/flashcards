@@ -76,6 +76,9 @@ void MyFrame::SetupMenu() {
   int id_create = options_menu->Append(wxID_ANY, "Создать колоду&\tCtrl+N")->GetId();
   this->Bind(wxEVT_MENU, &MyFrame::CreateDeck, this, id_create);
 
+  int id_delete = options_menu->Append(wxID_ANY, "Удалить колоду&\tCtrl+D")->GetId();
+  this->Bind(wxEVT_MENU, &MyFrame::DeleteDeck, this, id_delete);
+
   SetMenuBar(menu_bar);
 }
 
@@ -235,13 +238,18 @@ void MyFrame::OnClickAns(wxCommandEvent&) {
 bool MyFrame::DeckEnded() {
   if (!deck_has_cards) {
     wxMessageBox("Текущая колода пуста.\nДобавьте карточки с помощью редактора колод.", "Сообщение", wxOK);
+    RefsreshCard();
     return true;
   }
 
   if (cards.GetCurrentDeckSize() == 0) {
     RefsreshCard();
-    if (wxMessageBox("Вы изучили все карточки из колоды.\nНачать сначала?", "Сообщение",
-      wxOK | wxCANCEL == wxOK)) {
+
+    wxString msg = "Вы изучили все карточки из колоды.\nНачать сначала?";
+    auto ended = new wxMessageDialog(this, msg, "Сообщение", wxICON_INFORMATION | wxOK | wxCANCEL);
+    ended->SetOKCancelLabels("ОК", "Отмена");
+
+    if (ended->ShowModal() == wxID_OK) {
       std::string deck_id = cards.GetCurrentDeckId();
       cards.SetCurrentDeck(deck_id);
     }
@@ -254,31 +262,35 @@ bool MyFrame::DeckEnded() {
 
 void MyFrame::RenameDeck(wxCommandEvent&) {
   std::wstring current_name = cards.GetCurrentDeckName();
-  wxString msg = "Введите новое название для колоды " + current_name;
+  wxString msg = "Введите новое название для колоды: " + current_name;
 
-  rename.Create(this, msg, "Смена названия", "", wxOK);
-  rename.SetValue("");
+  wxTextEntryDialog rename(this, msg, "Смена названия", wxEmptyString, wxOK);
+  rename.SetValue(wxEmptyString);
 
-  rename.ShowModal();
+  if (rename.ShowModal() == wxID_OK) {
+    new_name = rename.GetValue();
+    new_name.Trim();
 
-  new_name = rename.GetValue();
+    std::wstring w_new_name = new_name.ToStdWstring();
 
-  std::wstring w_new_name = new_name.ToStdWstring();
+    if (new_name != wxEmptyString) {
+      msg = "Название изменено на: " + new_name;
 
-  
-  if (new_name != "") {
-    msg = "Название изменено на " + new_name;
+      auto renamed = new wxMessageDialog(this, msg, "Сообщение", wxICON_INFORMATION | wxOK | wxCANCEL);
+      renamed->SetOKCancelLabels("ОК", "Отмена");
 
-    if (w_new_name == current_name) {
-      wxMessageBox("Вы ввели текущее название!", "Внимание", wxOK | wxICON_WARNING);
-    }
-    else if (wxMessageBox(msg, "Сообщение", wxOK | wxCANCEL) == wxOK) {
+      if (w_new_name == current_name) {
+        wxMessageBox("Вы ввели текущее название!", "Внимание!", wxOK | wxICON_WARNING);
+      }
 
-      cards.RenameCurrentDeck(cards.GetCurrentDeckId(), w_new_name);
-      SetupMenu();
-    }
-    else {
-      wxMessageBox("Смена названия отменена", "Сообщение", wxOK);
+      else if (renamed->ShowModal() == wxID_OK) {
+        cards.RenameCurrentDeck(cards.GetCurrentDeckId(), w_new_name);
+        SetupMenu();
+      }
+
+      else {
+        wxMessageBox("Смена названия отменена", "Сообщение", wxOK);
+      }
     }
   }
 }
@@ -296,7 +308,7 @@ void MyFrame::SelectDeck(wxCommandEvent& e) {
       selected_id = it.first;
       selected = cards.GetDeckNameFromId(selected_id);
 
-      wxString msg = "Выбрана колода ";
+      wxString msg = "Выбрана колода: ";
       msg += selected;
       wxMessageBox(msg, "Сообщение", wxOK);
 
@@ -340,6 +352,7 @@ void MyFrame::OnSelectCard(wxCommandEvent& event) {
   }
 
   cards.SetCurrentDeck(deck_id);
+  RefsreshCard();
 
   if (cards.GetCurrentDeckSize() == 0) {
     deck_has_cards = false;
@@ -351,28 +364,37 @@ void MyFrame::OnSelectCard(wxCommandEvent& event) {
 }
 
 void MyFrame::EditDeck(wxCommandEvent&) {
-  wxDialog* select_dlg = new wxDialog(this, wxID_ANY, "Выберите карточки", wxDefaultPosition, wxSize(330, 300));
+  wxDialog* select_dlg = new wxDialog(this, wxID_ANY, "Выберите карточки", wxDefaultPosition, wxSize(350, 350));
 
-  select_cards = new wxCheckListBox(select_dlg, wxID_ANY, wxDefaultPosition, wxSize(300, 200), 0, NULL, wxLB_ALWAYS_SB);
+  select_cards = new wxCheckListBox(select_dlg, wxID_ANY, wxDefaultPosition, wxSize(330, 250), 0, NULL, wxLB_ALWAYS_SB);
 
   int idx = 0;
 
   for (auto it : cards.GetCardsList()) {
     select_cards->Append(it.second);
+
     for (auto cur_it : cards.GetCurrentCardsList()) {
       if (it == cur_it) {
         select_cards->Check(idx);
         break;
       }
     }
+
     select_cards->Bind(wxEVT_CHECKLISTBOX, &MyFrame::OnSelectCard, this);
     idx += 1;
   }
 
-  auto ok_sizer = select_dlg->CreateButtonSizer(wxOK);
   auto ok = new wxButton(select_dlg, wxID_OK);
-  ok_sizer->Add(ok, 1, wxALIGN_BOTTOM | wxRIGHT | wxBOTTOM, 10);
-  select_dlg->SetSizer(ok_sizer);
+  auto cancel = new wxButton(select_dlg, wxID_CANCEL, "Отмена");
+
+  auto btn_sizer_h = new wxBoxSizer(wxHORIZONTAL);
+  auto btn_sizer_v = new wxBoxSizer(wxVERTICAL);
+
+  btn_sizer_h->Add(ok, 0, wxALIGN_BOTTOM | wxRIGHT | wxBOTTOM, 10);
+  btn_sizer_h->Add(cancel, 0, wxALIGN_BOTTOM | wxRIGHT | wxBOTTOM, 10);
+
+  btn_sizer_v->Add(btn_sizer_h, 1, wxALIGN_RIGHT);
+  select_dlg->SetSizer(btn_sizer_v);
   select_dlg->ShowModal();
 }
 
@@ -387,9 +409,12 @@ void MyFrame::CreateDeck(wxCommandEvent&) {
   new_name = creator.GetValue();
 
   if (new_name != "") {
-    msg = "Создана колода " + new_name;
+    msg = "Создана колода: " + new_name;
+    
+    auto created = new wxMessageDialog(this, msg, "Сообщение", wxICON_INFORMATION | wxOK | wxCANCEL);
+    created->SetOKCancelLabels("ОК", "Отмена");
 
-    if (wxMessageBox(msg, "Сообщение", wxOK | wxCANCEL) == wxCANCEL) {
+    if (created->ShowModal() == wxID_CANCEL) {
       msg = "Создание колоды отменено";
       wxMessageBox(msg, "Сообщение");
     }
@@ -403,10 +428,35 @@ void MyFrame::CreateDeck(wxCommandEvent&) {
   }
 }
 
-void MyFrame::OnUpdateOk(wxUpdateUIEvent& event) {
-  event.Enable(false);
+void MyFrame::DeleteDeck(wxCommandEvent&) {
+  std::string current_id = cards.GetCurrentDeckId();
+  std::wstring current_name = cards.GetCurrentDeckName();
 
-  if (!rename.GetValue().IsEmpty()) {
-    event.Enable(true);
+  wxString msg = "Вы действительно хотите удалить колоду: " + current_name + "?";
+
+  if (current_id == "0") {
+    std::wstring default_name = cards.GetDeckNameFromId("0");
+    wxString warning_msg = "Невозможно удалить колоду: " + default_name + ".\nОна является колодой по умолчанию.";
+    wxMessageBox(warning_msg, "Внимание!", wxICON_HAND);
+
+    return;
+  }
+
+  auto deleted = new wxMessageDialog(this, msg, "Сообщение", wxICON_QUESTION | wxOK | wxCANCEL);
+  deleted->SetOKCancelLabels("ОК", "Отмена");
+
+  if (deleted->ShowModal() == wxID_CANCEL) {
+    wxMessageBox("Удаление колоды отменено.", "Сообщение");
+  }
+
+  else {
+    msg = "Колода " + current_name + " удалена.";
+    wxMessageBox(msg, "Сообщение");
+
+    cards.DeleteDeck(cards.GetCurrentDeckId());
+    cards.SetCurrentDeck("0");
+
+    SetupMenu();
+    RefsreshCard();
   }
 }

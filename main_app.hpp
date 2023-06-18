@@ -39,6 +39,7 @@ private:
   void SelectDeck(wxCommandEvent&);
   void EditDeck(wxCommandEvent&);
   void CreateDeck(wxCommandEvent&);
+  void DeleteDeck(wxCommandEvent&);
 
 
   wxStaticText* question;
@@ -49,8 +50,6 @@ private:
   wxTextCtrl* answer_text;
 
   wxString new_name;
-
-  wxTextEntryDialog rename;
 
   wxCheckListBox* select_cards;
   

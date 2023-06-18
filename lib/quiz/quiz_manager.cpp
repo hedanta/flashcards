@@ -4,9 +4,13 @@
 #include <iostream>
 #include <fstream>
 
+namespace {
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> Converter;
+}
+
 QuizManager::QuizManager() = default;
 
-QuizManager::QuizManager(std::string& deck_id)
+QuizManager::QuizManager(const std::string& deck_id)
 : cards{}
 , deck_id_{ deck_id }
 , study_deck_{ cards.GetShuffledDeck(deck_id_) }
@@ -27,7 +31,7 @@ const std::string QuizManager::GetCurrentDeckId() {
   return deck_id_;
 }
 
-const std::wstring QuizManager::GetDeckNameFromId(std::string& deck_id) {
+const std::wstring QuizManager::GetDeckNameFromId(const std::string& deck_id) {
   return cards.GetDeckNameFromId(deck_id);
 }
 
@@ -66,27 +70,31 @@ const std::wstring QuizManager::GetAnswer() {
   return GetCard().second; 
 }
 
-void QuizManager::SetCurrentDeck(std::string& deck_id) {
+void QuizManager::SetCurrentDeck(const std::string& deck_id) {
   deck_id_ = deck_id;
   study_deck_ = cards.GetShuffledDeck(deck_id_);
 }
 
-const void QuizManager::RenameCurrentDeck(const std::string& deck_id, std::wstring& new_name) {
+const void QuizManager::RenameCurrentDeck(const std::string& deck_id, const std::wstring& new_name) {
   cards.RenameDeck(deck_id, new_name);
 }
 
-const void QuizManager::AddToDeck(const int& card_id, std::string& deck_id) {
+const void QuizManager::AddToDeck(const int& card_id, const std::string& deck_id) {
   cards.AddToDeck(card_id, deck_id);
 }
 
-const void QuizManager::RemoveFromDeck(const int& card_id, std::string& deck_id) {
+const void QuizManager::RemoveFromDeck(const int& card_id, const std::string& deck_id) {
   cards.RemoveFromDeck(card_id, deck_id);
 }
 
-const bool QuizManager::CheckUserAnswer(std::wstring& user_ans, std::wstring& card_ans) {
+const bool QuizManager::CheckUserAnswer(const std::wstring& user_ans, const std::wstring& card_ans) {
   return user_ans == card_ans;
 }
 
-const void QuizManager::CreateDeck(std::wstring& deck_name) {
+const void QuizManager::CreateDeck(const std::wstring& deck_name) {
   cards.CreateDeck(deck_name);
+}
+
+const void QuizManager::DeleteDeck(const std::string& deck_id) {
+  cards.DeleteDeck(deck_id);
 }
