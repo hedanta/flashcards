@@ -29,8 +29,8 @@ add_custom_target(install_${PROJECT_NAME}
         -P cmake_install.cmake
         )
 
-install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/<$CONFIG>/ 
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/
         DESTINATION bin/
-        FILES_MATCHING 
-        PATTERN "*.dll"
-        PATTERN "*.so")
+        FILES_MATCHING
+        PATTERN ".dll"
+        PATTERN ".so")

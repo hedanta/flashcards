@@ -34,6 +34,7 @@ bool MyApp::OnInit() {
 
   MyFrame* frame = new MyFrame("Карточки", wxDefaultPosition, wxDefaultSize);
   frame->Show(true);
+
   return true;
 }
 
@@ -190,7 +191,7 @@ void MyFrame::OnClickCheck(wxCommandEvent&) {
     return;
   }
 
-  if (!first_click) {
+  if (!first_click && !show) {
     std::wstring user_ans = answer_text->GetValue().ToStdWstring();
     std::wstring expected_ans = cards.GetAnswer();
     Trim(user_ans);
@@ -224,8 +225,8 @@ void MyFrame::OnClickAns(wxCommandEvent&) {
   
   if (!first_click) {
     show = true;
-    checked = true;
     this->answer_text->SetValue(this->cards.GetAnswer());
+    cards.EraseCurrentCard();
 
     return;
   }
@@ -310,6 +311,7 @@ void MyFrame::SelectDeck(wxCommandEvent& e) {
 
       wxString msg = "Выбрана колода: ";
       msg += selected;
+
       wxMessageBox(msg, "Сообщение", wxOK);
 
       break;
