@@ -39,26 +39,26 @@ public:
   * @throw std::ofstream::badbit В случае возникновения
   * ошибки открытия/записи в файл
   */
-  const void WriteToCardsFile(json& data);
+  const void WriteToCardsFile(const json& data);
 
   /// @private
   int RandomNum(int& max_n);
 
   /// @private
-  std::string EncodeName(std::wstring& deck_name); 
+  std::string EncodeName(const std::wstring& deck_name); 
 
   /*! 
   * @brief Создаёт колоду с данным названием
   * @param deck_name Название новой колоды
   */
-  const void CreateDeck(std::wstring& deck_name);
+  const void CreateDeck(const std::wstring& deck_name);
 
   /*!
   * @brief Получает название колоды
   * @param deck_id Идентификатор колоды
   * @return Название колоды, соответствующее данному идентификатору
   */
-  const std::wstring GetNameFromId(std::string& deck_id);
+  const std::wstring GetNameFromId(const std::string& deck_id);
 
   /*!
   * @brief Получает все имеющиеся колоды
@@ -72,7 +72,7 @@ public:
   * @return Массив пар карточек вида 
   * "вопрос - ответ" из данной колоды
   */
-  const CardsContainer GetShuffledDeck(std::string& deck_id);
+  const CardsContainer GetShuffledDeck(const std::string& deck_id);
 
   /*!
   * @brief Получает список карточек
@@ -81,7 +81,7 @@ public:
   * "идентификатор карточки - вопрос" из
   * данной колоды
   */
-  const CardsWithId GetCardsList(std::string& deck_id);
+  const CardsWithId GetCardsList(const std::string& deck_id);
 
   /*!
   * @brief Получает название колоды
@@ -89,17 +89,25 @@ public:
   * @return Название колоды, соответствующей
   * данному идентификатору
   */
-  const std::wstring GetDeckNameFromId(std::string& deck_id);
+  const std::wstring GetDeckNameFromId(const std::string& deck_id);
 
   /// @private
-  const void AddToDeck(const int& card_id, std::string& deck_id);
+  const void AddToDeck(const int& card_id, const std::string& deck_id);
   /// @private
-  const void RemoveFromDeck(const int& card_id, std::string& deck_id);
+  const void RemoveFromDeck(const int& card_id, const std::string& deck_id);
 
   /*!
   * @brief Меняет название колоды
   * @param deck_id Идентификатор колоды
   * @param new_name Новое название колоды
   */
-  const void RenameDeck(const std::string& deck_id, std::wstring& new_name);
+  const void RenameDeck(const std::string& deck_id, const std::wstring& new_name);
+
+  /*!
+  * @brief Удаляет колоду
+  * 
+  * Удаляет колоду с данным идентификатором
+  * @param deck_id Идентификатор колоды
+  */
+  const void DeleteDeck(const std::string& deck_id);
 };

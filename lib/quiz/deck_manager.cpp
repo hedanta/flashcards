@@ -36,7 +36,7 @@ const json DeckManager::ReadFromCardsFile() {
 }
 
 // запись в json
-const void DeckManager::WriteToCardsFile(json& data) {
+const void DeckManager::WriteToCardsFile(const json& data) {
   std::ofstream cards_edit;
   cards_edit.exceptions(std::ofstream::badbit);
 
@@ -62,13 +62,13 @@ const void DeckManager::WriteToCardsFile(json& data) {
   return num;
 }
 
-std::string DeckManager::EncodeName(std::wstring& deck_name) {
+std::string DeckManager::EncodeName(const std::wstring& deck_name) {
   int max_n = 12345;
 	return std::to_string(RandomNum(max_n));
 }
 
 // создание колоды
-const void DeckManager::CreateDeck(std::wstring& deck_name) {
+const void DeckManager::CreateDeck(const std::wstring& deck_name) {
   json data = ReadFromCardsFile();
 
   // setting deck id
@@ -93,7 +93,7 @@ const void DeckManager::CreateDeck(std::wstring& deck_name) {
   WriteToCardsFile(data);
 }
 
-const std::wstring DeckManager::GetNameFromId(std::string& deck_id) {
+const std::wstring DeckManager::GetNameFromId(const std::string& deck_id) {
   json data = ReadFromCardsFile();
 
   std::wstring deck_name = L"";
@@ -108,7 +108,7 @@ const std::wstring DeckManager::GetNameFromId(std::string& deck_id) {
   return deck_name;
 }
 
-const CardsContainer DeckManager::GetShuffledDeck(std::string& deck_id) {
+const CardsContainer DeckManager::GetShuffledDeck(const std::string& deck_id) {
 	std::ifstream file;
     file.exceptions(std::ifstream::badbit);
 
@@ -142,7 +142,7 @@ const CardsContainer DeckManager::GetShuffledDeck(std::string& deck_id) {
     return deck;
 }
 
-const CardsWithId DeckManager::GetCardsList(std::string& deck_id) {
+const CardsWithId DeckManager::GetCardsList(const std::string& deck_id) {
   std::ifstream file;
   file.exceptions(std::ifstream::badbit);
 
@@ -187,12 +187,12 @@ const DeckContainer DeckManager::GetAllDecks() {
   return decks;
 }
 
-const std::wstring DeckManager::GetDeckNameFromId(std::string& deck_id) {
+const std::wstring DeckManager::GetDeckNameFromId(const std::string& deck_id) {
   return GetNameFromId(deck_id);
 }
 
 // добавление карточки в колоду
-const void DeckManager::AddToDeck(const int& card_id, std::string& deck_id) {
+const void DeckManager::AddToDeck(const int& card_id, const std::string& deck_id) {
   json data = ReadFromCardsFile();
 
   bool found = false;
@@ -211,7 +211,7 @@ const void DeckManager::AddToDeck(const int& card_id, std::string& deck_id) {
 }
 
 // удаление карточки из колоды
-const void DeckManager::RemoveFromDeck(const int& card_id, std::string& deck_id) {
+const void DeckManager::RemoveFromDeck(const int& card_id, const std::string& deck_id) {
   json data = ReadFromCardsFile();
 
   // количество колод, в которых есть карточка
@@ -230,12 +230,27 @@ const void DeckManager::RemoveFromDeck(const int& card_id, std::string& deck_id)
   WriteToCardsFile(data);
 }
 
-const void DeckManager::RenameDeck(const std::string& deck_id, std::wstring& w_new_name) {
+const void DeckManager::RenameDeck(const std::string& deck_id, const std::wstring& w_new_name) {
   json data = ReadFromCardsFile();
 
   std::string new_name = Converter.to_bytes(w_new_name);
 
   data["decks"].at(deck_id) = new_name;
   
+  WriteToCardsFile(data);
+}
+
+const void DeckManager::DeleteDeck(const std::string& deck_id) {
+  json data = ReadFromCardsFile();
+
+  auto it = data["decks"].find(deck_id);
+  data["decks"].erase(it);
+
+  int cards_cnt = data["cards"].size();
+
+  for (int i = 0; i < cards_cnt; i += 1) {
+    RemoveFromDeck(i, deck_id);
+  }
+
   WriteToCardsFile(data);
 }
