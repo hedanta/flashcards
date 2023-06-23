@@ -7,19 +7,25 @@
 * позволяющего создать графический
 * интерфейс
 */
-class MyApp : public wxApp {
+class CardsApp : public wxApp {
 public:
+  /*!
+  @brief Инициализирует окно приложения
+  */
   virtual bool OnInit();
 };
 
 /*!
 * @brief Класс окна верхнего уровня,
-* которое инициализирует основной 
+* которое инициализирует основной
 * графический интерфейс
 */
-class MyFrame : public wxFrame {
+class CardsFrame : public wxFrame {
 public:
-  MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+  /*!
+  @brief Конструктор окна приложения
+  */
+  CardsFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
 
 private:
   void SetupMenu();
@@ -52,7 +58,7 @@ private:
   wxString new_name;
 
   wxCheckListBox* select_cards;
-  
+
   QuizManager cards;
 
   std::vector<std::pair<std::string, int>> deck_menu_id;
@@ -71,8 +77,8 @@ enum ButtonId {
   ans_id
 };
 
-wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
-EVT_BUTTON(quest_id, MyFrame::OnClickQuest)
-EVT_BUTTON(check_id, MyFrame::OnClickCheck)
-EVT_BUTTON(ans_id, MyFrame::OnClickAns)
+wxBEGIN_EVENT_TABLE(CardsFrame, wxFrame)
+EVT_BUTTON(quest_id, CardsFrame::OnClickQuest)
+EVT_BUTTON(check_id, CardsFrame::OnClickCheck)
+EVT_BUTTON(ans_id, CardsFrame::OnClickAns)
 wxEND_EVENT_TABLE()

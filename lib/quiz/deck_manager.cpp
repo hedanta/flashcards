@@ -12,9 +12,6 @@ namespace {
 
 DeckManager::DeckManager() = default;
 
-DeckManager::~DeckManager() = default;
-
-// чтение из json
 const json DeckManager::ReadFromCardsFile() {
   setlocale(LC_ALL, "ru");
   std::ifstream cards_file;
@@ -35,7 +32,6 @@ const json DeckManager::ReadFromCardsFile() {
   return data;
 }
 
-// запись в json
 const void DeckManager::WriteToCardsFile(const json& data) {
   std::ofstream cards_edit;
   cards_edit.exceptions(std::ofstream::badbit);
@@ -67,11 +63,9 @@ std::string DeckManager::EncodeName(const std::wstring& deck_name) {
 	return std::to_string(RandomNum(max_n));
 }
 
-// создание колоды
 const void DeckManager::CreateDeck(const std::wstring& deck_name) {
   json data = ReadFromCardsFile();
 
-  // setting deck id
   bool found = false;
   std::wstring w_deck;
   for (auto& it : data["decks"].items()) {
@@ -191,7 +185,6 @@ const std::wstring DeckManager::GetDeckNameFromId(const std::string& deck_id) {
   return GetNameFromId(deck_id);
 }
 
-// добавление карточки в колоду
 const void DeckManager::AddToDeck(const int& card_id, const std::string& deck_id) {
   json data = ReadFromCardsFile();
 
@@ -210,7 +203,6 @@ const void DeckManager::AddToDeck(const int& card_id, const std::string& deck_id
   WriteToCardsFile(data);
 }
 
-// удаление карточки из колоды
 const void DeckManager::RemoveFromDeck(const int& card_id, const std::string& deck_id) {
   json data = ReadFromCardsFile();
 

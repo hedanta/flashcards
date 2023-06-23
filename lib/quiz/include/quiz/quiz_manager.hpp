@@ -1,4 +1,7 @@
-﻿#include "deck_manager.hpp"
+﻿#ifndef _QUIZ_MANAGER_HPP_
+#define _QUIZ_MANAGER_HPP_
+
+#include "deck_manager.hpp"
 
 #include <codecvt>
 #include <random>
@@ -7,8 +10,8 @@ using Flashcard = std::pair<std::wstring, std::wstring>;
 
 /*!
 * @brief Класс изучения карточек
-* 
-* Позволяет проводить сам квиз - 
+*
+* Позволяет проводить сам квиз -
 * устанавливать текущую колоду, получать случайную карточку,
 * проверять пользовательский ответ и т.д.
 */
@@ -24,29 +27,29 @@ public:
   /*!
   * @brief Конструктор по умолчанию
   */
-  QuizManager(); 
+  QuizManager();
+
+  /*!
+  * @private
+  */
+  QuizManager(const QuizManager&) = delete;
 
   /*!
   * @brief Конструктор по идентификатору колоды
-  * 
+  *
   * Создаёт экземпляр класса, в котором данная
   * колода является текущей
-  * 
+  *
   * @param deck_id Идентификатор колоды
   */
   QuizManager(const std::string& deck_id);
 
   /*!
-  * @brief Деструктор по умолчанию
-  */
-  ~QuizManager();
-  
-  /*!
   * @brief Устанавливает текущую колоду
-  * 
+  *
   * Устанавливает в качестве текущей колоду,
   * соответствующую данному идентификатору
-  * 
+  *
   * @param deck_id Идентификатор колоды
   */
   void SetCurrentDeck(const std::string& deck_id);
@@ -92,7 +95,6 @@ public:
 
   /*!
   * @brief Получает список карточек
-  * @param deck_id Идентификатор колоды
   * @return Массив пар вида
   * "Идентификатор карточки - вопрос" из
   * текущей колоды
@@ -106,25 +108,25 @@ public:
   const Flashcard GetCard();
 
   /*!
-  * @brief Получает вопрос
+  * @brief Получает вопрос из карточки
   * @return Вопрос из карточки
   */
   const std::wstring GetQuestion();
 
   /*!
-  * @brief Получает ответ
+  * @brief Получает ответ из карточки
   * @return Ответ из карточки
   */
   const std::wstring GetAnswer();
-  
+
   /*!
-  * @brief Проверяет ответ
-  * 
+  * @brief Проверяет пользовательский ответ
+  *
   * Проверяет данный пользователем ответ
-  * 
+  *
   * @param user_ans Ответ пользователя
   * @param card_ans Ожидаемый ответ из карточки
-  * @return True, если ответ пользователя верный, 
+  * @return True, если ответ пользователя верный,
   * в противном случае False
   */
   const bool CheckUserAnswer(const std::wstring& user_ans, const std::wstring& card_ans);
@@ -142,7 +144,7 @@ public:
   * @param deck_id Идентификатор колоды
   */
   const void AddToDeck(const int& card_id, const std::string& deck_id);
-  
+
   /*!
   * @brief Добавляет карточку в колоду
   * @param card_id Идентификатор карточки
@@ -152,9 +154,9 @@ public:
 
   /*!
   * @brief Создаёт колоду
-  * 
+  *
   * Создаёт колоду с данным названием
-  * 
+  *
   * @param deck_name Название колоды
   */
   const void CreateDeck(const std::wstring& deck_name);
@@ -164,10 +166,12 @@ public:
   *
   * Удаляет колоду с данным идентификатором
   *
-  * @param deck_name Идентификатор колоды
+  * @param deck_id Идентификатор колоды
   */
   const void DeleteDeck(const std::string& deck_id);
 
   /// @private
   void EraseCurrentCard();
 };
+
+#endif
