@@ -11,13 +11,11 @@ namespace {
 QuizManager::QuizManager() = default;
 
 QuizManager::QuizManager(const std::string& deck_id)
-: cards{}
-, deck_id_{ deck_id }
-, study_deck_{ cards.GetShuffledDeck(deck_id_) }
-, current_card_{}
+  : cards{}
+  , deck_id_{ deck_id }
+  , study_deck_{ cards.GetShuffledDeck(deck_id_) }
+  , current_card_{}
 {};
-
-QuizManager::~QuizManager() = default;
 
 void QuizManager::EraseCurrentCard() {
   study_deck_.pop_back();
@@ -59,15 +57,15 @@ const CardsWithId QuizManager::GetCurrentCardsList() {
 }
 
 const int QuizManager::GetCurrentDeckSize() {
-  return study_deck_.size(); 
+  return study_deck_.size();
 }
 
 const std::wstring QuizManager::GetQuestion() {
-  return GetCard().first; 
+  return GetCard().first;
 }
 
 const std::wstring QuizManager::GetAnswer() {
-  return GetCard().second; 
+  return GetCard().second;
 }
 
 void QuizManager::SetCurrentDeck(const std::string& deck_id) {
