@@ -28,7 +28,11 @@
 2. В скачанной директории:
 ```
   >cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=<Ваш путь до vcpkg>/scripts/buildsystems/vcpkg.cmake
+```
+```
   >cmake --build build --config Release
+```
+```
   >cmake --install ./build --prefix ./cards
 ```
 По завершении сборки в папке cards появится `cards.exe`, который можно запустить
