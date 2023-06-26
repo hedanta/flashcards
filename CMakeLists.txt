@@ -16,6 +16,11 @@ set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
 
 find_package(wxWidgets CONFIG REQUIRED)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+  add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+endif()
+
 add_executable(cards WIN32
 		main_app.cpp
     main_app.hpp

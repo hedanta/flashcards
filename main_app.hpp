@@ -68,6 +68,9 @@ private:
   bool show = false;
   bool deck_has_cards = true;
 
+  wxString dlg_name = L"Сообщение";
+  wxString warning_dlg = L"Внимание!";
+
   wxDECLARE_EVENT_TABLE();
 };
 
